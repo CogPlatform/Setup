@@ -9,8 +9,8 @@ This installs x-cmd, pixi and pixi installs python and other command line tools.
 Critical tools:
 
 1. `awscli` is used to upload data to data server for Alyx
-2. `Python` with a specific version is need by MATLAB to use awscli.
-3. `Java` is used for jzmq, and needs to be a specific version for MATLAB.
+2. `Python` with a specific version is need by MATLAB to use awscli. <https://mathworks.com/support/requirements/python-compatibility.html>
+3. `Java` is used for jzmq, and needs to be a specific version for MATLAB. <https://mathworks.com/support/requirements/openjdk.html>
 
 # TODO
 

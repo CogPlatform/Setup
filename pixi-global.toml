@@ -40,11 +40,6 @@ channels = ["conda-forge"]
 dependencies = { mosh = "*" }
 exposed = { mosh = "mosh", mosh-client = "mosh-client", mosh-server = "mosh-server" }
 
-[envs.typst]
-channels = ["conda-forge"]
-dependencies = { typst = "*" }
-exposed = { typst = "typst" }
-
 [envs.librsvg]
 channels = ["conda-forge"]
 dependencies = { librsvg = "*" }
@@ -55,11 +50,6 @@ channels = ["conda-forge"]
 dependencies = { nvim = "*" }
 exposed = { nvim = "nvim" }
 
-[envs.yt-dlp]
-channels = ["conda-forge"]
-dependencies = { yt-dlp = "*" }
-exposed = { yt-dlp = "yt-dlp" }
-
 [envs.img2pdf]
 channels = ["conda-forge"]
 dependencies = { img2pdf = "*" }
@@ -69,11 +59,6 @@ exposed = { img2pdf = "img2pdf", img2pdf-gui = "img2pdf-gui" }
 channels = ["conda-forge"]
 dependencies = { ripgrep = "*" }
 exposed = { rg = "rg" }
-
-[envs.asciinema]
-channels = ["conda-forge"]
-dependencies = { asciinema = "*" }
-exposed = { asciinema = "asciinema" }
 
 [envs.p7zip]
 channels = ["conda-forge"]
@@ -114,14 +99,4 @@ exposed = { fd = "fd" }
 channels = ["conda-forge"]
 dependencies = { pandoc = "*" }
 exposed = { pandoc-lua = "pandoc-lua", pandoc-server = "pandoc-server", pandoc = "pandoc" }
-
-[envs.ruby]
-channels = ["conda-forge"]
-dependencies = { ruby = "*", compilers = "*" }
-exposed = { bundle = "bundle", bundler = "bundler", erb = "erb", gem = "gem", irb = "irb", racc = "racc", rake = "rake", rbs = "rbs", rdbg = "rdbg", rdoc = "rdoc", ri = "ri", ruby = "ruby", syntax_suggest = "syntax_suggest", typeprof = "typeprof" }
-
-[envs.nodejs]
-channels = ["conda-forge"]
-dependencies = { nodejs = "*" }
-exposed = { corepack = "corepack", node = "node", npm = "npm", npx = "npx" }
 

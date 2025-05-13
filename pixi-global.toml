@@ -1,5 +1,9 @@
 version = 1
 
+[envs.openjdk]
+channels = ["conda-forge"]
+dependencies = { openjdk = "17.*" }
+
 [envs.sd]
 channels = ["conda-forge"]
 dependencies = { sd = "*" }

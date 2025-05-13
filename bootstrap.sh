@@ -24,12 +24,12 @@ ln -sf ./pixi-global.toml $HOME/.pixi/manifests/pixi-global.toml
 pixi global sync
 
 # Install MATLAB
-if [ "$PLATFORM" = "Linux" ]; then
-	curl -L -o ~/bin/mpm https://www.mathworks.com/mpm/glnxa64/mpm
- 	version="R2024a"
- 	products='MATLAB Curve_Fitting_Toolbox Instrument_Control_Toolbox MATLAB_Report_Generator Optimization_Toolbox Parallel_Computing_Toolbox Signal_Processing_Toolbox Statistics_and_Machine_Learning_Toolbox'
-	$E:HOME/bin/mpm install --no-gpu --no-jre --release=$version --destination=$E:HOME/matlab$version --products=$products
-fi
+curl -L -o ~/bin/mpm https://www.mathworks.com/mpm/glnxa64/mpm
+version="R2024a"
+products='MATLAB Curve_Fitting_Toolbox Instrument_Control_Toolbox MATLAB_Report_Generator Optimization_Toolbox Parallel_Computing_Toolbox Signal_Processing_Toolbox Statistics_and_Machine_Learning_Toolbox'
+mkdir -p "$E:HOME/matlab$version"
+$E:HOME/bin/mpm install --no-gpu --no-jre --release=$version --destination=$E:HOME/matlab$version --products=$products
+
 
 if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install build-essential zsh git gparted vim curl file mc

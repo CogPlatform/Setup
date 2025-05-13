@@ -42,11 +42,20 @@ fi
 # Clone repos
 mkdir -p $HOME/Code
 cd $HOME/Code
-git clone --depth 1 https://github.com/Psychtoolbox/Psychtoolbox-3
+git clone --depth 1 https://github.com/CogPlatform/Psychtoolbox-3
 git clone --recurse-submodules https://github.com/iandol/opticka.git
 git clone --recurse-submodules https://github.com/CogPlatform/CageLab.git
 git clone --recurse-submodules https://github.com/CogPlatform/matlab-jzmq.git
 git clone --recurse-submodules https://github.com/Ccccraz/matmoteGO.git
+
+# Setup PTB:
+cd $HOME/Code/Psychtoolbox-3/Psychtoolbox
+matlab -nodesktop -nosplash -r "SetupPsychToolbox; Pause(1); exit"
+
+# Setup opticka path
+cd $HOME/Code/opticka
+matlab -nodesktop -nosplash -r "addOptickaToPath; Pause(1); exit"
+
 
 if [ -x "$(which zsh)" ]; then
 	printf 'Switching to use ZSH, you will need to reboot...\n'

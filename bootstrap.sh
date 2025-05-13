@@ -23,11 +23,6 @@ pixi global sync
 # Create bin folder
 mkdir -p $HOME/bin
 
-# Copy .zshrc
-[[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak
-cp "$(pwd)/zshrc" "$HOME/.zshrc"
-cp "$(pwd)/aliases" "$HOME/aliases"
-
 if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install build-essential zsh git gparted vim curl file mc
 	sudo apt -my install freeglut3 gawk mesa-utils exfatprogs
@@ -56,7 +51,12 @@ matlab -nodesktop -nosplash -r "SetupPsychToolbox; Pause(1); exit"
 cd $HOME/Code/opticka
 matlab -nodesktop -nosplash -r "addOptickaToPath; Pause(1); exit"
 
+# Copy .zshrc
+[[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak
+cp "$(pwd)/zshrc" "$HOME/.zshrc"
+cp "$(pwd)/aliases" "$HOME/aliases"
 
+# switch from bash to zsh as the default shell
 if [ -x "$(which zsh)" ]; then
 	printf 'Switching to use ZSH, you will need to reboot...\n'
 	chsh -s "$(which zsh)" && source ~/.zshrc

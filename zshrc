@@ -55,8 +55,9 @@ else
 			ln -sf "/usr/local/MATLAB/${x}/bin/glnxa64/mlint" ~/bin/mlint &> /dev/null # matlab
 		fi
 	done
-	[[ -d "/usr/lib/jvm/java-17-openjdk-amd64/bin/" ]] && export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64/" # Linux Java
-	[[ -d "/usr/lib/jvm/java-17-openjdk-amd64/bin/" ]] && export path=("${JAVA_HOME}bin" $path) # Linux JDK
+	[[ -d "$HOME/.pixi/envs/openjdk/lib/jvm/" ]] && export JAVA_HOME="$HOME/.pixi/envs/openjdk/lib/jvm/" # Linux Java
+	[[ -d "$HOME/.pixi/envs/openjdk/lib/jvm/" ]] && export MATLAB_JAVA="$HOME/.pixi/envs/openjdk/lib/jvm/" # Linux Java
+	[[ -d "$JAVA_HOME" ]] && export path=("${JAVA_HOME}bin" $path) # Linux JDK
 fi
 
 #------------------------------------FINALISE PATH

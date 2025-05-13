@@ -1,0 +1,87 @@
+export PLATFORM="$(uname -s)"
+
+#------------------------------------X-CMD SETUP
+export ___X_CMD_HELP_LANGUAGE="en"
+[ ! -f "$HOME/.x-cmd.root/X" ] || . "$HOME/.x-cmd.root/X" # boot up x-cmd.
+
+#-------------------------------PREFER nvim
+if [[ -f $(which nvim) ]]; then
+	export EDITOR='nvim'
+elif [[ -f $(which vim) ]]; then
+	export EDITOR='vim'
+fi
+
+#-------------------------------ZSH OPTIONS
+COMPLETION_WAITING_DOTS="true"
+DIRSTACKSIZE=20 # pushd stacksize
+setopt AUTO_PUSHD PUSHD_IGNORE_DUPS PUSHD_MINUS PUSHD_SILENT 
+HISTSIZE=20000
+SAVEHIST=20000
+HISTFILE=~/.zsh_history
+setopt extended_glob
+setopt extended_history 
+setopt hist_expire_dups_first	# Expire duplicate entries first when trimming history.
+setopt hist_ignore_dups			# Don't record an entry that was just recorded again.
+setopt hist_ignore_all_dups		# Delete old recorded entry if new entry is a duplicate.
+setopt hist_ignore_space		# Don't record an entry starting with a space.
+setopt hist_save_no_dups		# Don't write duplicate entries in the history file.
+setopt hist_reduce_blanks		# Remove superfluous blanks before recording entry.
+setopt inc_append_history     	# write to the history file immediately, not when the shell exits.
+setopt share_history          	# share command history dataexport MANPAGER='less -X'        # don't clear after quitting man
+typeset -U PATH path			# don't allow duplicates in path
+
+unalias run-help >& /dev/null
+autoload run-help # use ESC + H to bring up help, see https://man.archlinux.org/man/extra/zsh/zshcontrib.1.en
+alias help=run-help
+
+
+ul=("R2025b" "R2025a" "R2024b" "R2024a" "R2023b" "R2023a" "R2022b" "R2022a" "R2021b" "R2021a" "R2020b" "R2020a")
+match=0
+if [[ $PLATFORM == 'Darwin' ]]; then
+	for x in $ul; do
+		if ( [[ $match == 0 ]] && [[ -d "/Applications/MATLAB_${x}.app/bin" ]] ); then
+			match=1
+			path=("/Applications/MATLAB_${x}.app/bin" $path) # matlab
+			export MATLAB_EXECUTABLE="/Applications/MATLAB_${x}.app/bin/matlab" # matlab
+			ln -sf "/Applications/MATLAB_${x}.app/bin/maci64/mlint" ~/bin/mlint # matlab
+		fi
+	done
+else
+	for x in $ul; do
+		if ( [[ $match == 0 ]] && [[ -d "/usr/local/MATLAB/${x}/bin" ]]); then
+			match=1
+			path=("/usr/local/MATLAB/${x}/bin" $path) # matlab
+			export MATLAB_EXECUTABLE="/usr/local/MATLAB/${x}/bin/matlab" # matlab
+			ln -sf "/usr/local/MATLAB/${x}/bin/glnxa64/mlint" ~/bin/mlint &> /dev/null # matlab
+		fi
+	done
+	[[ -d "/usr/lib/jvm/java-17-openjdk-amd64/bin/" ]] && export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64/" # Linux Java
+	[[ -d "/usr/lib/jvm/java-17-openjdk-amd64/bin/" ]] && export path=("${JAVA_HOME}bin" $path) # Linux JDK
+fi
+
+#------------------------------------FINALISE PATH
+[[ -d "$HOME/.local/bin" ]] && path=("$HOME/.local/bin" $path)
+[[ -d "/snap/bin" ]] && path=("/snap/bin" $path)
+[[ -d "$HOME/bin" ]] && path=("$HOME/bin" $path)
+[[ -d "$HOME/.cache/lm-studio/bin" ]] && path=("$HOME/.cache/lm-studio/bin" $path)
+[[ -d "$HOME/.pixi/envs/ruby/share/rubygems/bin" ]] && path=("$HOME/.pixi/envs/ruby/share/rubygems/bin" $path)
+[[ -d "$HOME/.pixi/bin" ]] && path=("$HOME/.pixi/bin" $path)
+export path
+
+#------------------------------------FINALISE OTHERS
+[[ -x $(which pyenv) ]] && eval "$(pyenv init - zsh)"
+[[ -x $(which rbenv) ]] && eval "$(rbenv init - zsh)"
+[[ -f "$HOME/aliases" ]] && source "$HOME/aliases"
+[[ -x $(which fzf) ]] && source <(fzf --zsh)
+[[ -x $(which pixi) ]] && eval "$(pixi completion --shell zsh)"
+
+#---------------------------------------STARSHIP
+if [[ -f $(which starship) ]]; then
+	eval "$(starship init zsh)"
+else
+	autoload -Uz promptinit; promptinit; prompt adam1
+fi
+
+#---------------------------------------SAY HELLO
+echo "\n⌃a,e: ⇄ | ⌃w,k,u: 🔪 | ⌃r,s: 🔍 | d, cd - & cd #n: 🚀 | 💡 curl cheat.sh/?\n"
+

@@ -1,0 +1,318 @@
+export PLATFORM=$(uname -s)
+export PROC=$(uname -m)
+if [[ -f $(which eza) ]]; then
+	alias lls='eza --icons=auto -al -r -s size'
+	alias llt='eza --icons=auto -al -r -s time'
+	alias lll='eza --icons=auto -al@'
+	alias ll='eza --icons=auto -al'
+	alias dir='eza --icons=auto -al'
+	alias ls='eza --icons=auto'
+elif [[ $PLATFORM = 'Darwin' ]]; then 
+	alias la='ls -alGhF@'
+	alias las='ls -alGhFeLH'
+	alias ll='ls -alFGh'
+	alias lls='-alFGhS@s'
+	alias llt='ls -alFGht'
+	alias dir='ls -alfG'
+else
+	alias ls='ls --color=auto'
+	alias ll='ls -AFlh'
+	alias la='ls -A'
+	alias l='ls -CF'
+	alias dir='ls -alfG'
+	alias cls='clear; ls'
+	alias l.='ls -d .[^.]*' #only show .dot files
+fi
+
+alias installmicromamba='"${SHELL}" <(curl -L micro.mamba.pm/install.sh)'
+alias installKitty='curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin \
+ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/ \
+cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/ \
+cp ~/.local/kitty.app/share/applications/kitty-open.desktop ~/.local/share/applications/ \
+sed -i "s|Icon=kitty|Icon=/home/$USER/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png|g" ~/.local/share/applications/kitty*.desktop \
+sed -i "s|Exec=kitty|Exec=/home/$USER/.local/kitty.app/bin/kitty|g" ~/.local/share/applications/kitty*.desktop \
+echo "kitty.desktop" > ~/.config/xdg-terminals.list'
+
+alias smbfix='kill `pidof gvfsd-smb-browse`'
+alias hping='httping -K'
+alias gst='git status'
+alias gca='git commit --all'
+alias gdt='git difftool'
+alias resetorigin='git fetch origin && git reset --hard origin/master && git clean -f -d'
+alias resetupstream='git fetch upstream && git reset --hard upstream/master && git clean -f -d'
+alias untar='tar -zxvf '
+alias wget='wget -c '
+alias makepassword='openssl rand -base64 15'
+alias grep='grep --color=auto'
+alias gzip='gzip -9n' # set strongest compression level as ‘default’ for gzip
+alias ping='ping -c 5' # ping 5 times ‘by default’
+[[ -x $(which prettyping) ]] && alias ping='prettyping -c 5 --nolegend'
+[[ -x $(which bat) ]] && alias cat='bat'
+[[ -x $(which kitty) ]] && alias kssh='kitty +kitten ssh'
+
+
+# fuzzy finder
+if [[ -x $(which fzf) ]]; then
+	alias preview="fzf --preview 'bat --color \"always\" {}'"
+	# add support for ctrl+o to open selected file in VS Code
+	export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(code {})+abort'"
+fi
+
+# Sizes of Folder Contents
+alias sizes='du -sh * | sort -h'
+
+# File size
+alias fs="stat -f \"%z bytes\""
+
+# Download - it downloads the specified file
+alias dl='curl -C - -O'
+# This one is really useful - it shares the current directory open in terminal
+# It shares this at the location localhost:8000
+alias sharedir='python -m SimpleHTTPServer'
+
+# Get readable list of network IPs
+alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
+#My IP address
+alias myip="dig +short myip.opendns.com @resolver1.opendns.com"
+# Enhanced WHOIS lookups
+alias whois="whois -h whois-servers.net"
+
+# View HTTP traffic
+alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
+alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET \/.*\""
+
+# ROT13-encode text. Works for decoding, too! ;)
+alias rot13='tr a-zA-Z n-za-mN-ZA-M'
+
+# URL-encode strings
+alias urlencode='python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))"'
+alias urldecode='python3 -c "import urllib.parse, sys; print(urllib.parse.unquote(sys.argv[1]))"'
+
+
+# Processes
+alias tu='top -o cpu' # cpu
+alias tm='top -o vsize' # memory
+
+
+alias flushdns='sudo systemd-resolve --flush-caches; sudo systemd-resolve --statistics'
+
+# Checksums
+alias md2='openssl md2'
+alias md4='openssl md4'
+alias md5='openssl md5'
+alias mdc2='openssl mdc2'
+alias rmd160='openssl rmd160'
+alias sha='openssl sha'
+alias sha1='openssl sha1'
+alias sha256sum='shasum --algorithm 256'
+
+function ffmpeg-update() {
+	cd ~
+	lver=$(ffmpeg -version | grep -owE 'N-\d+-[^-]+')
+	rver=$(curl -s https://evermeet.cx/ffmpeg/info/ffmpeg/snapshot | jq -r '.version')
+	echo "Local: $lver & Remote: $rver"
+	if [[ ! $(echo N-$lver) =~ $rver ]]; then
+		echo '\tDownloading new ffmpeg:'
+		curl -JL --output ff.7z https://evermeet.cx/ffmpeg/get
+		7z -y -o$HOME/bin/ e ff.7z
+		cp ~/bin/ffmpeg "$HOME/Library/Application Support/FFmpegTools/"
+		rm ff.7z
+		ffmpeg -version
+	else
+		echo '\tNo need to update...'
+	fi
+}
+
+function avahi-reset() {
+	if [[ $PLATFORM = "Linux" ]]; then
+		sudo systemctl stop avahi-daemon.socket
+		sudo systemctl stop avahi-daemon.service
+		sudo systemctl start avahi-daemon.socket
+		sudo systemctl start avahi-daemon.service
+		sudo systemctl status avahi-daemon.service
+	fi
+}
+
+function avahi-stop() {
+	if [[ $PLATFORM = "Linux" ]]; then
+		sudo systemctl stop avahi-daemon.socket
+		sudo systemctl stop avahi-daemon.service
+		sudo systemctl status avahi-daemon.service
+	fi
+}
+
+function transfer() { 
+	if [ $# -eq 0 ]; then
+		echo -e "No arguments specified. Usage:\necho transfer /tmp/test.md\ncat /tmp/test.md | transfer test.md";
+		return 1;
+	fi
+	tmpfile=$( mktemp -t transferXXX );
+	if tty -s; then
+		basefile=$(basename "$1" | sed -e 's/[^a-zA-Z0-9._-]/-/g');
+		curl --progress-bar --upload-file "$1" "https://transfer.sh/$basefile" >> $tmpfile;
+	else 
+		curl --progress-bar --upload-file "-" "https://transfer.sh/$1" >> $tmpfile ;
+	fi;
+	cat $tmpfile;
+	rm -f $tmpfile;
+}
+
+function sp() {
+	if [[ $# -eq 0 ]]; then
+		echo "Will unset the proxy..."
+		unset {http,https,ftp,all,no}_proxy
+		git config --global --unset http.proxy
+		git config --global --unset https.proxy
+	elif [[ $# -eq 1 ]]; then
+		export no_proxy="localhost, 127.0.0.1, ::1"
+		if [[ $1 == "-l" ]]; then
+			echo -e "Proxy settings:\n==============="
+		else
+			echo "Proxy set:\n===============" 
+			if [[ $1 =~ ^socks5 ]]; then
+				export {http,https,ftp,all}_proxy="$1"
+				git config --global http.proxy "$1"
+				git config --global https.proxy "$1"
+			elif [[ $1 =~ ^http ]]; then
+				export {http,https,ftp,all}_proxy="$1"
+				git config --global http.proxy "$http_proxy"
+				git config --global https.proxy "$https_proxy"
+			else
+				export {http,https,ftp,all}_proxy="http://$1"
+				git config --global http.proxy "$http_proxy"
+				git config --global https.proxy "$https_proxy"
+			fi
+		fi
+	elif [[ $# -eq 2 ]]; then
+		export no_proxy="localhost, 127.0.0.1, ::1"
+		if [[ $1 == "-a" ]]; then # TODO add apt proxy setup
+			echo -e "TODO:\n==============="
+		else
+			echo "Proxy set:\n===============" 
+			export {http,ftp,all}_proxy="$1"
+			export https_proxy="$2"
+			if [[ $1 =~ ^socks5 ]]; then
+				git config --global http.proxy "$1"
+				git config --global https.proxy "$2"
+			else
+				git config --global http.proxy "http://$http_proxy"
+				git config --global https.proxy "https://$https_proxy"
+			fi
+		fi
+	fi
+	echo -e "PROXY: HTTP = $http_proxy | HTTPS = $https_proxy | ALL = $all_proxy"
+	echo -e "BYPASS: $no_proxy"
+	echo -e "GIT:\n$(git config --global --get-regexp http)"
+}
+alias setproxy='sp'
+
+# l(ist)ips Get local and WAN IP adddresses
+lips() {
+	local interface ip
+	for interface in $(networksetup -listallhardwareports | awk '/^Device: /{print $2}'); do
+		ip=$(ipconfig getifaddr $interface)
+		[ "$ip" != "" ] && break
+	done
+
+	local locip extip
+
+	[ "$ip" != "" ] && locip=$ip || locip="inactive"
+
+	ip=`dig +short myip.opendns.com @resolver1.opendns.com`
+	[ "$ip" != "" ] && extip=$ip || extip="inactive"
+
+	printf '%11s: %s\n%11s: %s\n' "Local IP" $locip "External IP" $extip
+}
+
+# Get Software Updates, update Homebrew itself, and upgrade installed Homebrew packages
+function update() {
+	sudo printf "\n=====>>> Start Update @ \e[93m$(date)\e[m <<<=====\n"
+	myolddir=$(pwd)
+	ul=(~/Code/opticka ~/Code/octicka ~/Code/Titta ~/Code/AfterImage
+	~/Code/matlab-jzmq ~/Code/matmoteGO ~/Code/CageLab
+	~/Code/Psychtoolbox-3 ~/Code/fieldtrip ~/Code/Training ~/Code/Palamedes)
+	for x in $ul; do
+		if [[ -d ${x}/.git ]]; then
+			printf "\n\n---> Updating \e[92m${x}\e[m...\n"
+			cd ${x}
+			oldbranch=$(git branch | grep -e '*' | cut -b 3-)
+			if [[ ! ${oldbranch} =~ 'master|main' ]]; then
+				if [[ ${x} =~ 'fieldtrip' ]]; then
+					git checkout umaster
+				elif [[ ${x} =~ 'Palamedes' ]]; then
+					git checkout main
+				else
+					git checkout master
+				fi
+			fi
+			git pull
+			git status
+			if [[ -n $(git remote 2>/dev/null | grep upstream) ]]; then
+				printf "\t\t---> Fetching \e[92m${x}\e[m upstream...\n"
+				git fetch -v upstream
+				if [[ ! ${x} =~ 'Psychtoolbox' ]]; then
+					git merge --ff-only -v upstream/master
+				fi
+			fi
+			if [[ ! ${oldbranch} =~ 'master' ]]; then
+				git checkout ${oldbranch}
+			fi
+		fi
+	done
+	cd $myolddir
+	unset myolddir
+
+	if [[ -x $(which brew) ]]; then
+		printf '\n\n---> Updating \e[92mHomeBrew\e[m...\n'
+		export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK='true'
+		if [[ $PLATFORM = "Linux" ]]; then
+			if [[ -n $(brew tap 2>/dev/null | grep cask) ]]; then
+				brew untap homebrew/cask
+			fi
+		fi
+		brew update
+		brew outdated
+		brew upgrade --force-bottle 
+		brew cleanup
+	fi
+
+	if [[ $PLATFORM = "Linux" ]]; then
+		printf '\n\n---> Updating \e[92mApt/snap/flatpak/firmware\e[m...\n'
+		sudo apt update; sudo apt autoremove; apt list --upgradable
+		[[ -x $(which snap) ]] && sudo snap refresh
+		[[ -x $(which flatpak) ]] && flatpak update -y
+		[[ -x $(which fwupdmgr) ]] && fwupdmgr get-upgrades
+	fi
+
+	[[ -f $(which pixi) ]] && (printf '\n\n---> Updating \e[92mPIXI\e[m...\n'; pixi self-update; pixi global -v update)
+	[[ -f $(which pkgx) ]] && (printf '\n\n---> Updating \e[92mPKGX\e[m...\n'; pkgx --sync; pkgx --update)
+	[[ -f $(which rbenv) ]] && (printf '\n\n---> Rehash \e[92mRBENV\e[m...\n'; rbenv rehash)
+	[[ -f $(which pyenv) ]] && (printf '\n\n---> Rehash \e[92mPYENV\e[m...\n'; pyenv rehash)
+	[[ -e "$HOME/.zi" ]] && (printf '\n\n---> Updating \e[92mZINIT\e[m...\n';zi self-update; zi update -p --all)
+	[[ -e "$HOME/.x-cmd.root/bin/x-cmd" ]] &&  (printf '\n\n---> Updating \e[92mX-CMD\e[m...\n'; x-cmd upgrade; x-cmd env upgrade --all --force)
+	printf "\n=====>>> Finish Update @ \e[93m$(date)\e[m <<<=====\n"
+}
+
+# See all UDP ports open
+function listUDP() {
+	if [ $# == 0 ]; then
+		tok="matlab"
+		echo "search for: $tok"
+	else
+		tok=$1
+	fi
+	sudo lsof -i UDP -P | grep -i "$tok"
+}
+
+# See listening TCP ports
+function listTCP() {
+	if [ $# == 0 ]; then
+		tok="listen"
+		echo "search for: $tok"
+	else
+		tok=$1
+	fi
+	sudo lsof -i TCP -P | grep -i "$tok"
+}
+
+

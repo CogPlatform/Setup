@@ -9,6 +9,9 @@ PLATFORM=$(uname -s)$MOD
 printf "Using %s...\n" "$PLATFORM"
 printf '\e[0m'
 
+# Create bin folder
+mkdir -p $HOME/bin
+
 # Install XCMD
 [[ ! -d $HOME/.x-cmd.root ]] && eval "$(curl https://get.x-cmd.com/x7)"
 
@@ -27,9 +30,6 @@ if [ "$PLATFORM" = "Linux" ]; then
  	products='MATLAB Curve_Fitting_Toolbox Instrument_Control_Toolbox MATLAB_Report_Generator Optimization_Toolbox Parallel_Computing_Toolbox Signal_Processing_Toolbox Statistics_and_Machine_Learning_Toolbox'
 	$E:HOME/bin/mpm install --no-gpu --no-jre --release=$version --destination=$E:HOME/matlab$version --products=$products
 fi
- 
-# Create bin folder
-mkdir -p $HOME/bin
 
 if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install build-essential zsh git gparted vim curl file mc

@@ -64,14 +64,10 @@ fi
 [[ -d "$HOME/.local/bin" ]] && path=("$HOME/.local/bin" $path)
 [[ -d "/snap/bin" ]] && path=("/snap/bin" $path)
 [[ -d "$HOME/bin" ]] && path=("$HOME/bin" $path)
-[[ -d "$HOME/.cache/lm-studio/bin" ]] && path=("$HOME/.cache/lm-studio/bin" $path)
-[[ -d "$HOME/.pixi/envs/ruby/share/rubygems/bin" ]] && path=("$HOME/.pixi/envs/ruby/share/rubygems/bin" $path)
 [[ -d "$HOME/.pixi/bin" ]] && path=("$HOME/.pixi/bin" $path)
 export path
 
 #------------------------------------FINALISE OTHERS
-[[ -x $(which pyenv) ]] && eval "$(pyenv init - zsh)"
-[[ -x $(which rbenv) ]] && eval "$(rbenv init - zsh)"
 [[ -f "$HOME/aliases" ]] && source "$HOME/aliases"
 [[ -x $(which fzf) ]] && source <(fzf --zsh)
 [[ -x $(which pixi) ]] && eval "$(pixi completion --shell zsh)"

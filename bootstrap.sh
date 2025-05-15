@@ -1,11 +1,13 @@
 #!/bin/bash
-printf "\n\n--->>> Bootstrap terminal %s setup, current directory is %s\n\n" "$SHELL" "$(pwd)"
-printf '\e[36m'
 export PLATFORM=$(uname)
 export ARCH=$(uname -m)
+export SPATH=$(pwd)
 uname -a | grep -iq "microsoft" && MOD="WSL"
 uname -a | grep -iq "aarch64|armv7" && MOD="RPi"
 PLATFORM=$(uname -s)$MOD
+
+printf "\n\n--->>> Bootstrap terminal %s setup, current directory is %s\n\n" "$SHELL" "$SPATH"
+printf '\e[36m'
 printf "Using %s...\n" "$PLATFORM"
 printf '\e[0m'
 
@@ -16,20 +18,20 @@ mkdir -p $HOME/bin
 [[ ! -d $HOME/.x-cmd.root ]] && eval "$(curl https://get.x-cmd.com/x7)"
 
 # Install Pixi
-[[ ! -d $HOME/.pixi ]] && eval curl -fsSL https://pixi.sh/install.sh | bash
+[[ ! -d $HOME/.pixi/bin ]] && eval curl -fsSL https://pixi.sh/install.sh | bash
 
 # Add pixi-global.toml
 mkdir -p $HOME/.pixi/manifests
-ln -sf ./pixi-global.toml $HOME/.pixi/manifests/pixi-global.toml
+ln -sf $SPATH/pixi-global.toml $HOME/.pixi/manifests/
 pixi global sync
 
 # Install MATLAB
 curl -L -o ~/bin/mpm https://www.mathworks.com/mpm/glnxa64/mpm
 version="R2024a"
 products='MATLAB Curve_Fitting_Toolbox Instrument_Control_Toolbox MATLAB_Report_Generator Optimization_Toolbox Parallel_Computing_Toolbox Signal_Processing_Toolbox Statistics_and_Machine_Learning_Toolbox'
-mkdir -p "$E:HOME/matlab$version"
-mpath="$E:HOME/matlab$version"
-$E:HOME/bin/mpm install --no-gpu --no-jre --release=$version --destination=$E:HOME/matlab$version --products=$products
+mkdir -p "$HOME/matlab$version"
+mpath="$HOME/matlab$version"z
+$HOME/bin/mpm install --no-gpu --no-jre --release=$version --destination=$HOME/matlab$version --products=$products
 
 # APT
 if [ "$PLATFORM" = "Linux" ]; then
@@ -40,7 +42,8 @@ if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install synaptic zathura
 	sudo apt -my install snapd python3-pip
 	sudo apt -my install openjdk-17-jre
-	sudo snap install core code arduino rpi-imager obs-studio
+	sudo snap install core arduino rpi-imager obs-studio
+	sudo snap install --classic code
 fi
 
 # Clone repos
@@ -52,18 +55,16 @@ git clone --recurse-submodules https://github.com/CogPlatform/CageLab.git
 git clone --recurse-submodules https://github.com/CogPlatform/matlab-jzmq.git
 git clone --recurse-submodules https://github.com/Ccccraz/matmoteGO.git
 
-# Setup PTB:
+# Setup PTB and opticka path:
 cd $HOME/Code/Psychtoolbox-3/Psychtoolbox
-$mpath/matlab -nodesktop -nosplash -r "SetupPsychToolbox; Pause(1); exit"
+$mpath/matlab -nodesktop -nosplash -r "SetupPsychToolbox; pause(1); cd ../../opticka; addOptickaToPath; pause(1); exit"
 
-# Setup opticka path
-cd $HOME/Code/opticka
-$mpath/matlab -nodesktop -nosplash -r "addOptickaToPath; Pause(1); exit"
+cd $HOME
 
 # Copy .zshrc
 [[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak
-cp "$(pwd)/zshrc" "$HOME/.zshrc"
-cp "$(pwd)/aliases" "$HOME/aliases"
+cp -f "$SPATH/zshrc" "$HOME/.zshrc"
+cp -f "$SPATH/aliases" "$HOME/aliases"
 
 # switch from bash to zsh as the default shell
 if [ -x "$(which zsh)" ]; then

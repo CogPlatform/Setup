@@ -15,7 +15,7 @@ printf '\e[0m'
 mkdir -p $HOME/bin
 
 # Install XCMD
-[[ ! -d $HOME/.x-cmd.root ]] && eval "$(curl https://get.x-cmd.com/x7)"
+[[ ! -d $HOME/.x-cmd.root ]] && eval "$(curl https://get.x-cmd.com)"
 
 # Install Pixi
 [[ ! -d $HOME/.pixi/bin ]] && eval curl -fsSL https://pixi.sh/install.sh | bash

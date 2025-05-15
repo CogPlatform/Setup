@@ -20,6 +20,15 @@ mkdir -p $HOME/bin
 # Install Pixi
 [[ ! -d $HOME/.pixi/bin ]] && eval curl -fsSL https://pixi.sh/install.sh | bash
 
+# Install Zerotier
+curl -s https://install.zerotier.com | sudo bash
+sudo systemctl enable zerotier-one.service
+sudo zerotier-cli info
+
+# Install NoMachine
+curl -o $HOME/nomachine.deb -L https://download.nomachine.com/download/8.16/Linux/nomachine_8.16.1_1_amd64.deb
+sudo dpkg -i $HOME/nomachine.deb
+
 # Add pixi-global.toml
 mkdir -p $HOME/.pixi/manifests
 ln -sf $SPATH/pixi-global.toml $HOME/.pixi/manifests/
@@ -38,6 +47,7 @@ if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install build-essential zsh git gparted vim curl file mc
 	sudo apt -my install freeglut3-dev gawk mesa-utils exfatprogs
 	sudo apt -my install libglut-dev
+	sudo apt -my install openssh-server
 	sudo apt -my install p7zip-full p7zip-rar figlet jq htop 
 	sudo apt -my install libunrar5 libdc1394-25 libraw1394-11
 	sudo apt -my install synaptic zathura

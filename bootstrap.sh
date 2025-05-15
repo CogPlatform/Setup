@@ -36,8 +36,9 @@ $HOME/bin/mpm install --no-gpu --no-jre --release=$version --destination=$HOME/m
 # APT
 if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install build-essential zsh git gparted vim curl file mc
-	sudo apt -my install freeglut3 gawk mesa-utils exfatprogs
-	sudo apt -my install p7zip-full p7zip-rar figlet jq ansiweather htop 
+	sudo apt -my install freeglut3-dev gawk mesa-utils exfatprogs
+	sudo apt -my install libglut-dev
+	sudo apt -my install p7zip-full p7zip-rar figlet jq htop 
 	sudo apt -my install libunrar5 libdc1394-25 libraw1394-11
 	sudo apt -my install synaptic zathura
 	sudo apt -my install snapd python3-pip
@@ -56,10 +57,10 @@ git clone --recurse-submodules https://github.com/CogPlatform/matlab-jzmq.git
 git clone --recurse-submodules https://github.com/Ccccraz/matmoteGO.git
 
 # Setup PTB and opticka path:
-cd $HOME/Code/Psychtoolbox-3/Psychtoolbox
+cd "$HOME/Code/Psychtoolbox-3/Psychtoolbox"
 $mpath/matlab -nodesktop -nosplash -r "SetupPsychToolbox; pause(1); cd ../../opticka; addOptickaToPath; pause(1); exit"
 
-cd $HOME
+cd "$HOME"
 
 # Copy .zshrc
 [[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak

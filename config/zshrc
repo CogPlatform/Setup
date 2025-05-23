@@ -72,6 +72,10 @@ export path
 [[ -x $(which fzf) ]] && source <(fzf --zsh)
 [[ -x $(which pixi) ]] && eval "$(pixi completion --shell zsh)"
 
+#------------------------------------FINALISE PROMPT
+source "$HOME/zsh-history-substring-search.zsh"
+source "$HOME/zsh-autosuggestions.zsh"
+
 #---------------------------------------STARSHIP
 if [[ -f $(which starship) ]]; then
 	eval "$(starship init zsh)"

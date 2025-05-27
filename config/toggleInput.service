@@ -1,0 +1,16 @@
+[Unit]
+Description=Enable or disable an xinput device at startup
+After=display-manager.service
+# For graphical sessions, you may want After=graphical.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/toggleInput disable ILIATEK-TP
+User=prisys
+Environment=DISPLAY=:0
+# Uncomment the next line if using Wayland:
+# Environment=XDG_RUNTIME_DIR=/run/user/1000
+RemainAfterExit=true
+
+[Install]
+WantedBy=default.target

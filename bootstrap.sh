@@ -16,13 +16,14 @@ mkdir -p "$HOME/bin"
 mkdir -p "$HOME/.config"
 
 # this commmand disables the touch screen at start
-name="ILIATEK-TP"
-sed -i "s|\(ExecStart=/usr/local/bin/toggleInput [^ ]\+ \).*|\1"$name"|" ./config/toggleInput.service
-sudo cp -f ./config/toggleInput /usr/local/bin/toggleInput
+name="ILITEK-TP"
+sd '^(ExecStart=\/usr\/local\/bin\/toggleInput [^ ]+ ).*$' '$1 "'$name'"' ./config/toggleInput.service
+sudo cp -fv ./config/toggleInput /usr/local/bin/toggleInput
 sudo chmod +x /usr/local/bin/toggleInput
-sudo cp -fv./config/toggleInput.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable toggleInput.service
+sudo cp -fv ./config/toggleInput.service /etc/systemd/system/
+systemctl --user daemon-reload
+systemctl --user enable toggleInput.service
+systemctl --user start toggleInput.service
 
 # Install X-CMD
 [[ ! -d $HOME/.x-cmd.root ]] && eval "$(curl https://get.x-cmd.com)"

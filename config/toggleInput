@@ -13,33 +13,37 @@ fi
 ACTION="$1"
 DEVICE_PATTERN="$2"
 
+# Trim whitespace (leading/trailing)
+ACTION="${ACTION#"${ACTION%%[![:space:]]*}"}"
+ACTION="${ACTION%"${ACTION##*[![:space:]]}"}"
+
 if [[ "$ACTION" != "enable" && "$ACTION" != "disable" ]]; then
-  echo "First argument must be 'enable' or 'disable'"
-  exit 1
-fi
-
-# Get list of device IDs matching the device pattern
-DEVICE_LINE=$(xinput list --name-only | grep -i -- "$DEVICE_PATTERN" | head -n1)
-
-if [[ -z "$DEVICE_LINE" ]]; then
-  echo "Device matching '$DEVICE_PATTERN' not found."
+  echo "First argument must be 'enable' or 'disable'" >&2
   exit 2
 fi
 
-# Now, get the device id from `xinput list`
-DEVICE_ID=$(xinput list | grep -i -- "$DEVICE_LINE" | sed -n 's/.*id=\([0-9]\+\).*/\1/p')
+# Get list of device IDs matching the device pattern
+DEVICE_LINE=$(xinput list | grep -i -E "${DEVICE_PATTERN}[[:space:]]+id=" | head -n1)
+
+if [[ -z "$DEVICE_LINE" ]]; then
+  echo "Device matching '$DEVICE_PATTERN' not found."
+  exit 3
+fi
+
+DEVICE_ID=$(echo "$DEVICE_LINE" | sed -n 's/.*id=\([0-9]\+\).*/\1/p')
 
 if [[ -z "$DEVICE_ID" ]]; then
-  echo "Could not extract device ID for device '$DEVICE_LINE'"
-  exit 3
+  echo "Could not extract device ID for device '$DEVICE_LINE'" >&2
+  exit 4
 fi
 
 echo "Attempting to $ACTION device '$DEVICE_LINE' (id=$DEVICE_ID)..."
 
 if xinput "$ACTION" "$DEVICE_ID"; then
   echo "Device '$DEVICE_LINE' ($DEVICE_ID) ${ACTION}d successfully."
+  xinput list
   exit 0
 else
-  echo "Failed to $ACTION device '$DEVICE_LINE' ($DEVICE_ID)."
-  exit 4
+  echo "Failed to $ACTION device '$DEVICE_LINE' ($DEVICE_ID)." >&2
+  exit 5
 fi

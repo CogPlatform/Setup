@@ -104,3 +104,8 @@ channels = ["conda-forge"]
 dependencies = { pandoc = "*" }
 exposed = { pandoc-lua = "pandoc-lua", pandoc-server = "pandoc-server", pandoc = "pandoc" }
 
+[envs.uutils-coreutils]
+channels = ["conda-forge"]
+dependencies = { uutils-coreutils = "*" }
+exposed = { timeout = "timeout" }
+

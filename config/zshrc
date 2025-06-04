@@ -1,7 +1,7 @@
 export PLATFORM="$(uname -s)"
 
 #------------------------------------X-CMD SETUP
-export ___X_CMD_HELP_LANGUAGE="en"
+export ___X_CMD_LANG="en"
 [ ! -f "$HOME/.x-cmd.root/X" ] || . "$HOME/.x-cmd.root/X" # boot up x-cmd.
 
 #-------------------------------PREFER nvim
@@ -26,8 +26,8 @@ setopt hist_ignore_all_dups		# Delete old recorded entry if new entry is a dupli
 setopt hist_ignore_space		# Don't record an entry starting with a space.
 setopt hist_save_no_dups		# Don't write duplicate entries in the history file.
 setopt hist_reduce_blanks		# Remove superfluous blanks before recording entry.
-setopt inc_append_history     	# write to the history file immediately, not when the shell exits.
-setopt share_history          	# share command history dataexport MANPAGER='less -X'        # don't clear after quitting man
+setopt inc_append_history		# write to the history file immediately, not when the shell exits.
+setopt share_history			# share command history dataexport MANPAGER='less -X'        # don't clear after quitting man
 typeset -U PATH path			# don't allow duplicates in path
 
 unalias run-help >& /dev/null
@@ -72,7 +72,7 @@ export path
 [[ -x $(which fzf) ]] && source <(fzf --zsh)
 [[ -x $(which pixi) ]] && eval "$(pixi completion --shell zsh)"
 
-#------------------------------------FINALISE PROMPT
+#------------------------------------FINALISE PLUGINS
 source "$HOME/zsh-history-substring-search.zsh"
 source "$HOME/zsh-autosuggestions.zsh"
 

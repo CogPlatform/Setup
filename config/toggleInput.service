@@ -1,5 +1,5 @@
 [Unit]
-Description=Enable or disable an xinput device at startup
+Description=Disable an xinput device at startup
 After=graphical-session.target
 Wants=graphical-session.target
 

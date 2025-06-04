@@ -3,7 +3,7 @@ export PROC=$(uname -m)
 if [[ -f $(which eza) ]]; then
 	alias lls='eza --icons=auto -al -r -s size'
 	alias llt='eza --icons=auto -al -r -s time'
-	alias lll='eza --icons=auto -al@'
+	alias lll='eza --icons=auto -alg@'
 	alias ll='eza --icons=auto -al'
 	alias dir='eza --icons=auto -al'
 	alias ls='eza --icons=auto'
@@ -24,7 +24,6 @@ else
 	alias l.='ls -d .[^.]*' #only show .dot files
 fi
 
-alias installmicromamba='"${SHELL}" <(curl -L micro.mamba.pm/install.sh)'
 alias installKitty='curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin \
 ln -sf ~/.local/kitty.app/bin/kitty ~/.local/kitty.app/bin/kitten ~/.local/bin/ \
 cp ~/.local/kitty.app/share/applications/kitty.desktop ~/.local/share/applications/ \
@@ -46,7 +45,6 @@ alias makepassword='openssl rand -base64 15'
 alias grep='grep --color=auto'
 alias gzip='gzip -9n' # set strongest compression level as ‘default’ for gzip
 alias ping='ping -c 5' # ping 5 times ‘by default’
-[[ -x $(which prettyping) ]] && alias ping='prettyping -c 5 --nolegend'
 [[ -x $(which bat) ]] && alias cat='bat'
 [[ -x $(which kitty) ]] && alias kssh='kitty +kitten ssh'
 
@@ -88,11 +86,9 @@ alias rot13='tr a-zA-Z n-za-mN-ZA-M'
 alias urlencode='python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))"'
 alias urldecode='python3 -c "import urllib.parse, sys; print(urllib.parse.unquote(sys.argv[1]))"'
 
-
 # Processes
 alias tu='top -o cpu' # cpu
 alias tm='top -o vsize' # memory
-
 
 alias flushdns='sudo systemd-resolve --flush-caches; sudo systemd-resolve --statistics'
 
@@ -228,9 +224,9 @@ lips() {
 function update() {
 	sudo printf "\n=====>>> Start Update @ \e[93m$(date)\e[m <<<=====\n"
 	myolddir=$(pwd)
-	ul=(~/Code/opticka ~/Code/octicka ~/Code/Titta ~/Code/AfterImage
+	ul=(~/.dotfiles ~/Code/opticka ~/Code/octicka ~/Code/PTBSimia
 	~/Code/matlab-jzmq ~/Code/matmoteGO ~/Code/CageLab
-	~/Code/Psychtoolbox-3 ~/Code/fieldtrip ~/Code/Training ~/Code/Palamedes)
+	~/Code/Psychtoolbox ~/Code/fieldtrip ~/Code/Training ~/Code/Palamedes)
 	for x in $ul; do
 		if [[ -d ${x}/.git ]]; then
 			printf "\n\n---> Updating \e[92m${x}\e[m...\n"
@@ -286,9 +282,6 @@ function update() {
 
 	[[ -f $(which pixi) ]] && (printf '\n\n---> Updating \e[92mPIXI\e[m...\n'; pixi self-update; pixi global -v update)
 	[[ -f $(which pkgx) ]] && (printf '\n\n---> Updating \e[92mPKGX\e[m...\n'; pkgx --sync; pkgx --update)
-	[[ -f $(which rbenv) ]] && (printf '\n\n---> Rehash \e[92mRBENV\e[m...\n'; rbenv rehash)
-	[[ -f $(which pyenv) ]] && (printf '\n\n---> Rehash \e[92mPYENV\e[m...\n'; pyenv rehash)
-	[[ -e "$HOME/.zi" ]] && (printf '\n\n---> Updating \e[92mZINIT\e[m...\n';zi self-update; zi update -p --all)
 	[[ -e "$HOME/.x-cmd.root/bin/x-cmd" ]] &&  (printf '\n\n---> Updating \e[92mX-CMD\e[m...\n'; x-cmd upgrade; x-cmd env upgrade --all --force)
 	printf "\n=====>>> Finish Update @ \e[93m$(date)\e[m <<<=====\n"
 }

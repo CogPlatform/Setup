@@ -15,12 +15,15 @@ printf '\e[0m'
 mkdir -p "$HOME/bin"
 mkdir -p "$HOME/.config/systemd/user"
 
-# this commmand disables the touch screen at start
+# this section disables the touch screen at start
+# replace with name of the touch panel device
+# you can find the name by running `xinput list` in a terminal
+# and looking for the device that corresponds to your touch panel
 name="ILITEK-TP"
 sd '^(ExecStart=\/usr\/local\/bin\/toggleInput [^ ]+ ).*$' '$1 "'$name'"' ./config/toggleInput.service
-sudo cp -fv ./config/toggleInput /usr/local/bin/toggleInput
+sudo ln -svf $SPATH/config/toggleInput /usr/local/bin/toggleInput
 sudo chmod +x /usr/local/bin/toggleInput
-sudo cp -fv ./config/toggleInput.service $HOME/.config/systemd/user
+sudo ln -svf $SPATH/config/toggleInput.service $HOME/.config/systemd/user
 systemctl --user daemon-reload
 systemctl --user enable toggleInput.service
 systemctl --user start toggleInput.service
@@ -40,12 +43,12 @@ sudo zerotier-cli info
 curl -o $HOME/nomachine.deb -L https://download.nomachine.com/download/8.16/Linux/nomachine_8.16.1_1_amd64.deb
 sudo dpkg -i $HOME/nomachine.deb
 
-# Add pixi-global.toml
+# Link pixi-global.toml
 mkdir -p $HOME/.pixi/manifests
-ln -sf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
+ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
 pixi global sync
 
-# Install MATLAB
+# [Optional] Install MATLAB with MPM
 printf "Shall we use MPM to get MATLAB? [y / n]:  "
 read -r ans
 if [[ $ans == 'y' ]]; then
@@ -57,7 +60,7 @@ if [[ $ans == 'y' ]]; then
 	$HOME/bin/mpm install --no-gpu --no-jre --release=$version --destination=$HOME/matlab$version --products=$products
 fi
 
-# APT
+# APT / snap packages
 if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install build-essential zsh git gparted vim curl file mc
 	sudo apt -my install freeglut3-dev gawk mesa-utils exfatprogs
@@ -73,31 +76,31 @@ if [ "$PLATFORM" = "Linux" ]; then
 	sudo snap install --classic code
 fi
 
-# Clone repos
+# Clone core repos
 mkdir -p $HOME/Code
 cd $HOME/Code
-git clone --depth 1 https://gitee.com/CogPlatform/Psychtoolbox-3
+git clone --recurse-submodules https://gitee.com/CogPlatform/Psychtoolbox.git
 git clone --recurse-submodules https://gitee.com/CogPlatform/opticka.git
 git clone --recurse-submodules https://gitee.com/CogPlatform/CageLab.git
 git clone --recurse-submodules https://gitee.com/CogPlatform/matlab-jzmq.git
 git clone --recurse-submodules https://gitee.com/Ccccraz/matmoteGO.git
 
 # Setup PTB and opticka path:
-cd "$HOME/Code/Psychtoolbox-3/Psychtoolbox"
+cd "$HOME/Code/Psychtoolbox"
 $mpath/matlab -nodesktop -nosplash -r "SetupPsychToolbox; pause(1); cd ../../opticka; addOptickaToPath; pause(1); exit"
 
 cd "$HOME"
 
-# Copy .zshrc
+# Link .zshrc
 [[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak
-cp -f "$SPATH/config/zshrc" "$HOME/.zshrc"
-cp -f "$SPATH/config/zsh-history-substring-search.zsh" "$HOME"
-cp -f "$SPATH/config/zsh-autosuggestions.zsh" "$HOME"
-cp -f "$SPATH/config/aliases" "$HOME/aliases"
+ln -svf "$SPATH/config/zshrc" "$HOME/.zshrc"
+ln -svf "$SPATH/config/zsh-history-substring-search.zsh" "$HOME"
+ln -svf "$SPATH/config/zsh-autosuggestions.zsh" "$HOME"
+ln -svf "$SPATH/config/aliases" "$HOME/aliases"
 
 # few others
-cp -f "$SPATH/config/.tmux.conf" "$HOME"
-cp -f "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
+ln -svf "$SPATH/config/.tmux.conf" "$HOME"
+ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
 
 # switch from bash to zsh as the default shell
 if [ -x "$(which zsh)" ]; then

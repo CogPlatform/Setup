@@ -11,7 +11,7 @@ printf '\e[36m'
 printf "Using %s...\n" "$PLATFORM"
 printf '\e[0m'
 
-# Create folders
+# Create some folders
 mkdir -p "$HOME/bin"
 mkdir -p "$HOME/.config/systemd/user"
 
@@ -63,7 +63,8 @@ fi
 # APT / snap packages
 if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install build-essential zsh git gparted vim curl file mc
-	sudo apt -my install freeglut3-dev gawk mesa-utils exfatprogs
+	sudo apt -my install gawk mesa-utils exfatprogs
+	sudo apt -my install freeglut3-dev 
 	sudo apt -my install libglut-dev
 	sudo apt -my install openssh-server
 	sudo apt -my install p7zip-full p7zip-rar figlet jq htop 

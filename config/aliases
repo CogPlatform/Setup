@@ -48,7 +48,6 @@ alias ping='ping -c 5' # ping 5 times ‘by default’
 [[ -x $(which bat) ]] && alias cat='bat'
 [[ -x $(which kitty) ]] && alias kssh='kitty +kitten ssh'
 
-
 # fuzzy finder
 if [[ -x $(which fzf) ]]; then
 	alias preview="fzf --preview 'bat --color \"always\" {}'"
@@ -90,6 +89,7 @@ alias urldecode='python3 -c "import urllib.parse, sys; print(urllib.parse.unquot
 alias tu='top -o cpu' # cpu
 alias tm='top -o vsize' # memory
 
+# flush DNS cache
 alias flushdns='sudo systemd-resolve --flush-caches; sudo systemd-resolve --statistics'
 
 # Checksums
@@ -111,7 +111,6 @@ function ffmpeg-update() {
 		echo '\tDownloading new ffmpeg:'
 		curl -JL --output ff.7z https://evermeet.cx/ffmpeg/get
 		7z -y -o$HOME/bin/ e ff.7z
-		cp ~/bin/ffmpeg "$HOME/Library/Application Support/FFmpegTools/"
 		rm ff.7z
 		ffmpeg -version
 	else
@@ -137,6 +136,8 @@ function avahi-stop() {
 	fi
 }
 
+# Transfer.sh - a simple file sharing service
+# Usage: transfer <file> or cat <file> | transfer <filename>
 function transfer() { 
 	if [ $# -eq 0 ]; then
 		echo -e "No arguments specified. Usage:\necho transfer /tmp/test.md\ncat /tmp/test.md | transfer test.md";
@@ -153,6 +154,8 @@ function transfer() {
 	rm -f $tmpfile;
 }
 
+# Set / Unset proxy settings
+# Usage: setproxy [proxy] or setproxy -l to list current proxy settings
 function sp() {
 	if [[ $# -eq 0 ]]; then
 		echo "Will unset the proxy..."
@@ -220,7 +223,7 @@ lips() {
 	printf '%11s: %s\n%11s: %s\n' "Local IP" $locip "External IP" $extip
 }
 
-# Get Software Updates, update Homebrew itself, and upgrade installed Homebrew packages
+# Software Updates, update Homebrew itself, and upgrade installed Homebrew packages
 function update() {
 	sudo printf "\n=====>>> Start Update @ \e[93m$(date)\e[m <<<=====\n"
 	myolddir=$(pwd)
@@ -281,7 +284,6 @@ function update() {
 	fi
 
 	[[ -f $(which pixi) ]] && (printf '\n\n---> Updating \e[92mPIXI\e[m...\n'; pixi self-update; pixi global -v update)
-	[[ -f $(which pkgx) ]] && (printf '\n\n---> Updating \e[92mPKGX\e[m...\n'; pkgx --sync; pkgx --update)
 	[[ -e "$HOME/.x-cmd.root/bin/x-cmd" ]] &&  (printf '\n\n---> Updating \e[92mX-CMD\e[m...\n'; x-cmd upgrade; x-cmd env upgrade --all --force)
 	printf "\n=====>>> Finish Update @ \e[93m$(date)\e[m <<<=====\n"
 }
@@ -307,5 +309,3 @@ function listTCP() {
 	fi
 	sudo lsof -i TCP -P | grep -i "$tok"
 }
-
-

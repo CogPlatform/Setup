@@ -86,6 +86,8 @@ git clone --recurse-submodules https://gitee.com/CogPlatform/CageLab.git
 git clone --recurse-submodules https://gitee.com/CogPlatform/matlab-jzmq.git
 git clone --recurse-submodules https://gitee.com/Ccccraz/matmoteGO.git
 
+[[ -f "/usr/lib/x86_64-linux-gnu/libglut.so.3.12.0" ]] && sudo ln -svf /usr/lib/x86_64-linux-gnu/libglut.so.3.12.0 /usr/lib/x86_64-linux-gnu/libglut.so.3
+
 # Setup PTB and opticka path:
 cd "$HOME/Code/Psychtoolbox"
 $mpath/matlab -nodesktop -nosplash -r "SetupPsychToolbox; pause(1); cd ../../opticka; addOptickaToPath; pause(1); exit"

@@ -86,6 +86,9 @@ git clone --recurse-submodules https://gitee.com/CogPlatform/CageLab.git
 git clone --recurse-submodules https://gitee.com/CogPlatform/matlab-jzmq.git
 git clone --recurse-submodules https://gitee.com/Ccccraz/matmoteGO.git
 
+# PTB expects libglut.so.3 but this is not present in Ubuntu 24.04 and later.
+# The following line creates a symlink to the libglut.so.3.12.0 file, which is the version available in Ubuntu 24.04 and later.
+# This allows PTB to find the library it needs to function correctly.
 [[ -f "/usr/lib/x86_64-linux-gnu/libglut.so.3.12.0" ]] && sudo ln -svf /usr/lib/x86_64-linux-gnu/libglut.so.3.12.0 /usr/lib/x86_64-linux-gnu/libglut.so.3
 
 # Setup PTB and opticka path:

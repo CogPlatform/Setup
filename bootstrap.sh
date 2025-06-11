@@ -36,8 +36,10 @@ systemctl --user start toggleInput.service
 
 # Install eget and get cogmoteGO and mediamtx
 curl https://zyedidia.github.io/eget.sh | sh
-eget Ccccraz/cogmoteGO --to=/usr/local/bin
-eget bluenviron/mediamtx --to=/usr/local/bin
+chmod + x eget
+sudo mv eget /usr/local/bin/eget
+sudo eget Ccccraz/cogmoteGO --to=/usr/local/bin
+sudo eget bluenviron/mediamtx --to=/usr/local/bin
 ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
 eget LizardByte/Sunshine --to=./
 #sudo dpkg -i ./sunshine-ubuntu-24.04-amd64.deb
@@ -87,7 +89,7 @@ if [ "$PLATFORM" = "Linux" ]; then
 	sudo snap install --classic code
 
 	flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-	flatpak install flathub com.obsproject.Studio
+	flatpak install -y flathub com.obsproject.Studio
 	
 fi
 

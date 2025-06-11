@@ -19,7 +19,7 @@ mkdir -p "$HOME/.config/systemd/user"
 # replace with name of the touch panel device
 # you can find the name by running `xinput list` in a terminal
 # and looking for the device that corresponds to your touch panel
-name="ILITEK-TP"
+name="ILITEK-TP" # CHANGE THIS TO YOUR TOUCH PANEL NAME
 sd '^(ExecStart=\/usr\/local\/bin\/toggleInput [^ ]+ ).*$' '$1 "'$name'"' ./config/toggleInput.service
 sudo ln -svf $SPATH/config/toggleInput /usr/local/bin/toggleInput
 sudo chmod +x /usr/local/bin/toggleInput
@@ -33,6 +33,14 @@ systemctl --user start toggleInput.service
 
 # Install Pixi
 [[ ! -d $HOME/.pixi/bin ]] && eval curl -fsSL https://pixi.sh/install.sh | bash
+
+# Install eget and get cogmoteGO and mediamtx
+curl https://zyedidia.github.io/eget.sh | sh
+eget Ccccraz/cogmoteGO --to=/usr/local/bin
+eget bluenviron/mediamtx --to=/usr/local/bin
+ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
+eget LizardByte/Sunshine --to=./
+#sudo dpkg -i ./sunshine-ubuntu-24.04-amd64.deb
 
 # Install Zerotier
 curl -s https://install.zerotier.com | sudo bash
@@ -60,7 +68,7 @@ if [[ $ans == 'y' ]]; then
 	$HOME/bin/mpm install --no-gpu --no-jre --release=$version --destination=$HOME/matlab$version --products=$products
 fi
 
-# APT / snap packages
+# APT + snap + flatpak packages
 if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install build-essential zsh git gparted vim curl file mc
 	sudo apt -my install gawk mesa-utils exfatprogs
@@ -73,8 +81,14 @@ if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install synaptic zathura
 	sudo apt -my install snapd python3-pip
 	sudo apt -my install openjdk-17-jre
+	sudo apt -my install flatpak
+
 	sudo snap install core arduino rpi-imager obs-studio
 	sudo snap install --classic code
+
+	flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+	flatpak install flathub com.obsproject.Studio
+	
 fi
 
 # Clone core repos

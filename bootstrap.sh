@@ -38,16 +38,25 @@ systemctl --user start toggleInput.service
 curl https://zyedidia.github.io/eget.sh | sh
 chmod + x eget
 sudo mv eget /usr/local/bin/eget
-sudo eget Ccccraz/cogmoteGO --to=/usr/local/bin
 sudo eget bluenviron/mediamtx --to=/usr/local/bin
 ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
 eget LizardByte/Sunshine --to=./
 #sudo dpkg -i ./sunshine-ubuntu-24.04-amd64.deb
 
-# Install Zerotier
-curl -s https://install.zerotier.com | sudo bash
-sudo systemctl enable zerotier-one.service
-sudo zerotier-cli info
+# cogmoteGO
+curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | sh
+cogmoteGO service
+cogmoteGO service start
+
+# Install Netbird
+# Use the setup key from our password manager to replace XXX
+curl -fsSL https://pkgs.netbird.io/install.sh | sh
+netbird up --setup-key XXX
+
+# Install Zerotier -- deprecated in favor of netbird
+#curl -s https://install.zerotier.com | sudo bash
+#sudo systemctl enable zerotier-one.service
+#sudo zerotier-cli info
 
 # Install NoMachine
 curl -o $HOME/nomachine.deb -L https://download.nomachine.com/download/8.16/Linux/nomachine_8.16.1_1_amd64.deb
@@ -63,7 +72,7 @@ printf "Shall we use MPM to get MATLAB? [y / n]:  "
 read -r ans
 if [[ $ans == 'y' ]]; then
 	curl -L -o ~/bin/mpm https://www.mathworks.com/mpm/glnxa64/mpm
-	version="R2024a"
+	version="R2025a"
 	products='MATLAB Curve_Fitting_Toolbox Instrument_Control_Toolbox MATLAB_Report_Generator Optimization_Toolbox Parallel_Computing_Toolbox Signal_Processing_Toolbox Statistics_and_Machine_Learning_Toolbox'
 	mkdir -p "$HOME/matlab$version"
 	mpath="$HOME/matlab$version"z

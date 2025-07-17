@@ -34,14 +34,14 @@ systemctl --user start toggleInput.service
 # Install Pixi
 [[ ! -d $HOME/.pixi/bin ]] && eval curl -fsSL https://pixi.sh/install.sh | bash
 
-# Install eget and get cogmoteGO and mediamtx
+# Install eget and get mediamtx and sunshine
 curl https://zyedidia.github.io/eget.sh | sh
 chmod + x eget
 sudo mv eget /usr/local/bin/eget
 sudo eget bluenviron/mediamtx --to=/usr/local/bin
 ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
 eget LizardByte/Sunshine --to=./
-#sudo dpkg -i ./sunshine-ubuntu-24.04-amd64.deb
+sudo dpkg -i ./sunshine-ubuntu-24.04-amd64.deb
 
 # cogmoteGO
 curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | sh
@@ -51,7 +51,11 @@ cogmoteGO service start
 # Install Netbird
 # Use the setup key from our password manager to replace XXX
 curl -fsSL https://pkgs.netbird.io/install.sh | sh
-netbird up --setup-key XXX
+printf "Enter a KEY to register netbird (or blank to ignore): "
+read -r ans
+if [[ -n $ans ]]; then
+	netbird up --setup-key $ans
+fi
 
 # Install Zerotier -- deprecated in favor of netbird
 #curl -s https://install.zerotier.com | sudo bash
@@ -59,7 +63,7 @@ netbird up --setup-key XXX
 #sudo zerotier-cli info
 
 # Install NoMachine
-curl -o $HOME/nomachine.deb -L https://download.nomachine.com/download/8.16/Linux/nomachine_8.16.1_1_amd64.deb
+curl -o $HOME/nomachine.deb -L https://web9001.nomachine.com/download/9.0/Linux/nomachine_9.0.188_11_amd64.deb
 sudo dpkg -i $HOME/nomachine.deb
 
 # Link pixi-global.toml

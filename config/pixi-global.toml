@@ -105,6 +105,11 @@ channels = ["conda-forge"]
 dependencies = { lazygit = "*" }
 exposed = { lazygit = "lazygit" }
 
+[envs.carapace]
+channels = ["conda-forge"]
+dependencies = { carapace = "*" }
+exposed = { carapace = "carapace" }
+
 [envs.python]
 channels = ["conda-forge"]
 dependencies = { python = "3.12.*" , pipx = "*", pip = "*", setuptools = "*" }

@@ -227,7 +227,7 @@ lips() {
 function update() {
 	sudo printf "\n=====>>> Start Update @ \e[93m$(date)\e[m <<<=====\n"
 	myolddir=$(pwd)
-	ul=(~/.dotfiles ~/Code/opticka ~/Code/octicka ~/Code/PTBSimia
+	ul=(~/.dotfiles ~/Code/Setup ~/Code/opticka ~/Code/octicka ~/Code/PTBSimia
 	~/Code/matlab-jzmq ~/Code/matmoteGO ~/Code/CageLab
 	~/Code/Psychtoolbox ~/Code/fieldtrip ~/Code/Training ~/Code/Palamedes)
 	for x in $ul; do
@@ -261,6 +261,10 @@ function update() {
 	cd $myolddir
 	unset myolddir
 
+	# update cogmoteGO
+	curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | sh
+
+	# update homebrew if installed
 	if [[ -x $(which brew) ]]; then
 		printf '\n\n---> Updating \e[92mHomeBrew\e[m...\n'
 		export HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK='true'

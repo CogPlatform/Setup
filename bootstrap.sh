@@ -13,7 +13,9 @@ printf '\e[0m'
 
 # Create some folders
 mkdir -p "$HOME/bin"
+mkdir -p "$HOME/.local/bin"
 mkdir -p "$HOME/.config/systemd/user"
+mkdir -p "$HOME/.config/tmuxp"
 
 # this section disables the touch screen at start
 # replace with name of the touch panel device
@@ -36,22 +38,22 @@ systemctl --user start toggleInput.service
 
 # Install eget and get mediamtx and sunshine
 curl https://zyedidia.github.io/eget.sh | sh
-chmod + x eget
+chmod +x eget
 sudo mv eget /usr/local/bin/eget
 sudo eget bluenviron/mediamtx --to=/usr/local/bin
 ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
 eget LizardByte/Sunshine --to=./
 sudo dpkg -i ./sunshine-ubuntu-24.04-amd64.deb
 
-# cogmoteGO
+# install or update cogmoteGO
 curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | sh
 cogmoteGO service
 cogmoteGO service start
 
 # Install Netbird
 # Use the setup key from our password manager to replace XXX
-curl -fsSL https://pkgs.netbird.io/install.sh | sh
-printf "Enter a KEY to register netbird (or blank to ignore): "
+[[ ! -f $(which netbird) ]] && curl -fsSL https://pkgs.netbird.io/install.sh | sh
+printf "Enter a KEY to register netbird (blank to ignore): "
 read -r ans
 if [[ -n $ans ]]; then
 	netbird up --setup-key $ans
@@ -106,14 +108,15 @@ if [ "$PLATFORM" = "Linux" ]; then
 	
 fi
 
-# Clone core repos
-mkdir -p $HOME/Code
-cd $HOME/Code
-git clone --recurse-submodules https://gitee.com/CogPlatform/Psychtoolbox.git
-git clone --recurse-submodules https://gitee.com/CogPlatform/opticka.git
-git clone --recurse-submodules https://gitee.com/CogPlatform/CageLab.git
-git clone --recurse-submodules https://gitee.com/CogPlatform/matlab-jzmq.git
-git clone --recurse-submodules https://gitee.com/Ccccraz/matmoteGO.git
+# Clone our core repos
+mkdir -p "$HOME/Code"
+cd "$HOME/Code" || exit
+[[ ! -d 'Psychtoolbox' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/Psychtoolbox.git
+[[ ! -d 'opticka' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/opticka.git
+[[ ! -d 'CageLab' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/CageLab.git
+[[ ! -d 'matlab-jzmq' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/matlab-jzmq.git
+[[ ! -d 'matmoteGO' ]] && git clone --recurse-submodules https://gitee.com/Ccccraz/matmoteGO.git
+cd ~ || exit
 
 # PTB expects libglut.so.3 but this is not present in Ubuntu 24.04 and later.
 # The following line creates a symlink to the libglut.so.3.12.0 file, which is the version available in Ubuntu 24.04 and later.
@@ -121,10 +124,10 @@ git clone --recurse-submodules https://gitee.com/Ccccraz/matmoteGO.git
 [[ -f "/usr/lib/x86_64-linux-gnu/libglut.so.3.12.0" ]] && sudo ln -svf /usr/lib/x86_64-linux-gnu/libglut.so.3.12.0 /usr/lib/x86_64-linux-gnu/libglut.so.3
 
 # Setup PTB and opticka path:
-cd "$HOME/Code/Psychtoolbox"
+cd "$HOME/Code/Psychtoolbox" || exit
 $mpath/matlab -nodesktop -nosplash -r "SetupPsychToolbox; pause(1); cd ../../opticka; addOptickaToPath; pause(1); exit"
 
-cd "$HOME"
+cd "$HOME" || exit
 
 # Link .zshrc
 [[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak
@@ -135,6 +138,7 @@ ln -svf "$SPATH/config/aliases" "$HOME/aliases"
 
 # few others
 ln -svf "$SPATH/config/.tmux.conf" "$HOME"
+ln -svf "$SPATH/config/cagelab-monitor.yaml" "$HOME/.config/tmuxp"
 ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
 
 # switch from bash to zsh as the default shell

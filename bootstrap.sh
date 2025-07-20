@@ -37,13 +37,9 @@ systemctl --user start toggleInput.service
 [[ ! -d $HOME/.pixi/bin ]] && eval curl -fsSL https://pixi.sh/install.sh | bash
 
 # Install eget and get mediamtx and sunshine
-curl https://zyedidia.github.io/eget.sh | sh
-chmod +x eget
-sudo mv eget /usr/local/bin/eget
-sudo eget bluenviron/mediamtx --to=/usr/local/bin
-ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
-eget LizardByte/Sunshine --to=./
-sudo dpkg -i ./sunshine-ubuntu-24.04-amd64.deb
+[[ ! -f /usr/local/bin/eget ]] && curl https://zyedidia.github.io/eget.sh | sh; chmod +x eget; sudo mv eget /usr/local/bin/eget
+[[ ! -f /usr/local/bin/mediamtx ]] && sudo eget bluenviron/mediamtx --to=/usr/local/bin; ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
+[[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine --to=./; sudo dpkg -i ./sunshine-ubuntu-24.04-amd64.deb
 
 # install or update cogmoteGO
 curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | sh

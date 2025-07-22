@@ -22,10 +22,10 @@ mkdir -p "$HOME/.config/tmuxp"
 # you can find the name by running `xinput list` in a terminal
 # and looking for the device that corresponds to your touch panel
 name="ILITEK-TP" # CHANGE THIS TO YOUR TOUCH PANEL NAME
-sd '^(ExecStart=\/usr\/local\/bin\/toggleInput [^ ]+ ).*$' '$1 "'$name'"' ./config/toggleInput.service
-sudo ln -svf $SPATH/config/toggleInput /usr/local/bin/toggleInput
+sd '^(ExecStart=\/usr\/local\/bin\/toggleInput [^ ]+ ).*$' '$1"'$name'"' ./config/toggleInput.service
+sudo ln -svf "$SPATH/config/toggleInput" /usr/local/bin/toggleInput
 sudo chmod +x /usr/local/bin/toggleInput
-sudo ln -svf $SPATH/config/toggleInput.service $HOME/.config/systemd/user
+sudo ln -svf "$SPATH/config/toggleInput.service" "$HOME/.config/systemd/user"
 systemctl --user daemon-reload
 systemctl --user enable toggleInput.service
 systemctl --user start toggleInput.service

@@ -1,5 +1,15 @@
 export PLATFORM=$(uname -s)
 export PROC=$(uname -m)
+
+alias cagelab-monitor='tmuxp load $HOME/.config/tmuxp/cagelab-monitor.yaml'
+alias cagelab-reset='systemctl --user restart cogmoteGO && systemctl --user restart theConductor'
+
+alias gst='git status'
+alias gca='git commit --all'
+alias gdt='git difftool'
+alias resetorigin='git fetch origin && git reset --hard origin/master && git clean -f -d'
+alias resetupstream='git fetch upstream && git reset --hard upstream/master && git clean -f -d'
+
 if [[ -f $(which eza) ]]; then
 	alias lls='eza --icons=auto -al -r -s size'
 	alias llt='eza --icons=auto -al -r -s time'
@@ -34,11 +44,6 @@ echo "kitty.desktop" > ~/.config/xdg-terminals.list'
 
 alias smbfix='kill `pidof gvfsd-smb-browse`'
 alias hping='httping -K'
-alias gst='git status'
-alias gca='git commit --all'
-alias gdt='git difftool'
-alias resetorigin='git fetch origin && git reset --hard origin/master && git clean -f -d'
-alias resetupstream='git fetch upstream && git reset --hard upstream/master && git clean -f -d'
 alias untar='tar -zxvf '
 alias wget='wget -c '
 alias makepassword='openssl rand -base64 15'
@@ -232,13 +237,21 @@ function update() {
 	~/Code/Psychtoolbox ~/Code/fieldtrip ~/Code/Training ~/Code/Palamedes)
 	for x in $ul; do
 		if [[ -d ${x}/.git ]]; then
-			printf "\n\n---> Updating \e[92m${x}\e[m...\n"
+			printf "\n\n---> Updating \e[92m%s\e[m...\n" "${x}"
 			cd ${x}
 			oldbranch=$(git branch | grep -e '*' | cut -b 3-)
-			if [[ ! ${oldbranch} =~ 'master|main' ]]; then
-				if [[ ${x} =~ 'fieldtrip' ]]; then
+
+			# Check for local changes
+			if [[ -n $(git status --porcelain) ]]; then
+				printf "\t\t---> Found local changes in \e[93m%s\e[m, stashing...\n" "${x}"
+				git stash save "Auto-stashed by update function $(date)"
+				printf "\t\t---> Changes stashed. Use 'git stash list/pop' to recover\n"
+			fi
+
+			if [[ ! ${oldbranch} =~ master|main ]]; then
+				if [[ ${x} =~ fieldtrip ]]; then
 					git checkout umaster
-				elif [[ ${x} =~ 'Palamedes' ]]; then
+				elif [[ ${x} =~ Palamedes ]]; then
 					git checkout main
 				else
 					git checkout master
@@ -247,18 +260,18 @@ function update() {
 			git pull
 			git status
 			if [[ -n $(git remote 2>/dev/null | grep upstream) ]]; then
-				printf "\t\t---> Fetching \e[92m${x}\e[m upstream...\n"
+				printf "\t\t---> Fetching \e[92m%s\e[m upstream...\n" "${x}"
 				git fetch -v upstream
-				if [[ ! ${x} =~ 'Psychtoolbox' ]]; then
+				if [[ ! ${x} =~ Psychtoolbox ]]; then
 					git merge --ff-only -v upstream/master
 				fi
 			fi
-			if [[ ! ${oldbranch} =~ 'master' ]]; then
+			if [[ ! ${oldbranch} =~ master ]]; then
 				git checkout ${oldbranch}
 			fi
 		fi
 	done
-	cd $myolddir
+	cd "$myolddir" || return
 	unset myolddir
 
 	# update cogmoteGO

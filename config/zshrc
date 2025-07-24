@@ -68,9 +68,9 @@ fi
 export path
 
 #------------------------------------FINALISE OTHERS
-[[ -f "$HOME/aliases" ]] && source "$HOME/aliases"
 [[ -x $(which fzf) ]] && source <(fzf --zsh)
 [[ -x $(which pixi) ]] && eval "$(pixi completion --shell zsh)"
+[[ -f "$HOME/aliases" ]] && source "$HOME/aliases"
 
 #------------------------------------FINALISE PLUGINS
 source "$HOME/zsh-history-substring-search.zsh"

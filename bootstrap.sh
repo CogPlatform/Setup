@@ -1,7 +1,7 @@
 #!/bin/bash
 export PLATFORM=$(uname)
 export ARCH=$(uname -m)
-export SPATH=$(pwd)
+export SPATH="$HOME/Code/Setup"
 uname -a | grep -iq "microsoft" && MOD="WSL"
 uname -a | grep -iq "aarch64|armv7" && MOD="RPi"
 PLATFORM=$(uname -s)$MOD
@@ -16,13 +16,15 @@ mkdir -p "$HOME/bin"
 mkdir -p "$HOME/.local/bin"
 mkdir -p "$HOME/.config/systemd/user"
 mkdir -p "$HOME/.config/tmuxp"
+sudo chown -R "$USER":"$USER" /usr/local/bin
 
 # this section disables the touch screen at start
 # replace with name of the touch panel device
 # you can find the name by running `xinput list` in a terminal
 # and looking for the device that corresponds to your touch panel
-name="ILITEK-TP" # CHANGE THIS TO YOUR TOUCH PANEL NAME
-sd '^(ExecStart=\/usr\/local\/bin\/toggleInput [^ ]+ ).*$' '$1"'$name'"' ./config/toggleInput.service
+# CHANGE name TO YOUR TOUCH PANEL NAME
+name="ILITEK-TP"
+sd '^(ExecStart=\/usr\/local\/bin\/toggleInput [^ ]+ ).*$' '$1"'$name'"' "$SPATH/config/toggleInput.service"
 sudo ln -svf "$SPATH/config/toggleInput" /usr/local/bin/toggleInput
 sudo chmod +x /usr/local/bin/toggleInput
 sudo ln -svf "$SPATH/config/toggleInput.service" "$HOME/.config/systemd/user"
@@ -37,9 +39,9 @@ systemctl --user start toggleInput.service
 [[ ! -d $HOME/.pixi/bin ]] && eval curl -fsSL https://pixi.sh/install.sh | bash
 
 # Install eget and get mediamtx and sunshine
-[[ ! -f /usr/local/bin/eget ]] && curl https://zyedidia.github.io/eget.sh | sh; chmod +x eget; sudo mv eget /usr/local/bin/eget
-[[ ! -f /usr/local/bin/mediamtx ]] && sudo eget bluenviron/mediamtx --to=/usr/local/bin; ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
-[[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine --to=./; sudo dpkg -i ./sunshine-ubuntu-24.04-amd64.deb
+[[ ! -f /usr/local/bin/eget ]] && curl https://zyedidia.github.io/eget.sh | sh && chmod +x eget && mv eget /usr/local/bin/eget
+[[ ! -f /usr/local/bin/mediamtx ]] && sudo eget bluenviron/mediamtx --to=/usr/local/bin && ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
+[[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine --to=./ && sudo dpkg -i ./sunshine-ubuntu-*-amd64.deb
 
 # install or update cogmoteGO
 curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | sh
@@ -61,13 +63,8 @@ fi
 #sudo zerotier-cli info
 
 # Install NoMachine
-curl -o $HOME/nomachine.deb -L https://web9001.nomachine.com/download/9.0/Linux/nomachine_9.0.188_11_amd64.deb
-sudo dpkg -i $HOME/nomachine.deb
+[[ ! -f /usr/NX/bin/nxd ]] && curl -o $HOME/nomachine.deb -L https://web9001.nomachine.com/download/9.0/Linux/nomachine_9.0.188_11_amd64.deb && sudo dpkg -i $HOME/nomachine.deb
 
-# Link pixi-global.toml
-mkdir -p $HOME/.pixi/manifests
-ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
-pixi global sync
 
 # [Optional] Install MATLAB with MPM
 printf "Shall we use MPM to get MATLAB? [y / n]:  "
@@ -111,7 +108,7 @@ cd "$HOME/Code" || exit
 [[ ! -d 'opticka' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/opticka.git
 [[ ! -d 'CageLab' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/CageLab.git
 [[ ! -d 'matlab-jzmq' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/matlab-jzmq.git
-[[ ! -d 'matmoteGO' ]] && git clone --recurse-submodules https://gitee.com/Ccccraz/matmoteGO.git
+[[ ! -d 'matmoteGO' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/matmoteGO.git
 cd ~ || exit
 
 # PTB expects libglut.so.3 but this is not present in Ubuntu 24.04 and later.
@@ -120,16 +117,20 @@ cd ~ || exit
 [[ -f "/usr/lib/x86_64-linux-gnu/libglut.so.3.12.0" ]] && sudo ln -svf /usr/lib/x86_64-linux-gnu/libglut.so.3.12.0 /usr/lib/x86_64-linux-gnu/libglut.so.3
 
 # Setup PTB and opticka path:
-cd "$HOME/Code/Psychtoolbox" || exit
-$mpath/matlab -nodesktop -nosplash -r "SetupPsychToolbox; pause(1); cd ../../opticka; addOptickaToPath; pause(1); exit"
+#cd "$HOME/Code/Psychtoolbox" || exit
+#$mpath/matlab -nodesktop -nosplash -r "SetupPsychToolbox; pause(1); cd ../../opticka; addOptickaToPath; pause(1); exit"
 
 cd "$HOME" || exit
+
+# Link pixi-global.toml
+rm -rf $HOME/.pixi/manifests
+mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
+pixi global sync
 
 # Link .zshrc
 [[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak
 ln -svf "$SPATH/config/zshrc" "$HOME/.zshrc"
-ln -svf "$SPATH/config/zsh-history-substring-search.zsh" "$HOME"
-ln -svf "$SPATH/config/zsh-autosuggestions.zsh" "$HOME"
+ln -svf "$SPATH/config/zsh-"* "$HOME"
 ln -svf "$SPATH/config/aliases" "$HOME/aliases"
 
 # few others

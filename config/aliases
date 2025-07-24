@@ -3,6 +3,22 @@ export PROC=$(uname -m)
 
 alias cagelab-monitor='tmuxp load $HOME/.config/tmuxp/cagelab-monitor.yaml'
 alias cagelab-reset='systemctl --user restart cogmoteGO && systemctl --user restart theConductor'
+function cagelab-servicereset() {
+	cd "$HOME/.config/systemd/user" || return
+	sl=(theConductor.service mediamtx.service obs.service toggleInput.service)
+	for s in $sl; do
+		systemctl --user disable $s
+		rm -f $s
+		ln -sf $HOME/Code/CageLab/software/services/$s $HOME/.config/systemd/user
+		systemctl --user daemon-reload
+		systemctl --user enable $s
+	done
+	systemctl --user disable cogmoteGO.service
+	rm -f cogmoteGO.service
+	cogmoteGO service; cogmoteGO service start
+	systemctl --user daemon-reload
+	systemctl --user restart cogmoteGO theConductor
+}
 
 alias gst='git status'
 alias gca='git commit --all'
@@ -222,7 +238,7 @@ lips() {
 
 	[ "$ip" != "" ] && locip=$ip || locip="inactive"
 
-	ip=`dig +short myip.opendns.com @resolver1.opendns.com`
+	ip=$(dig +short myip.opendns.com @resolver1.opendns.com)
 	[ "$ip" != "" ] && extip=$ip || extip="inactive"
 
 	printf '%11s: %s\n%11s: %s\n' "Local IP" $locip "External IP" $extip
@@ -248,7 +264,7 @@ function update() {
 				printf "\t\t---> Changes stashed. Use 'git stash list/pop' to recover\n"
 			fi
 
-			if [[ ! ${oldbranch} =~ master|main ]]; then
+			if [[ ! ${oldbranch} =~ "master|main" ]]; then
 				if [[ ${x} =~ fieldtrip ]]; then
 					git checkout umaster
 				elif [[ ${x} =~ Palamedes ]]; then

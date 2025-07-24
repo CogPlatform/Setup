@@ -6,6 +6,9 @@ uname -a | grep -iq "microsoft" && MOD="WSL"
 uname -a | grep -iq "aarch64|armv7" && MOD="RPi"
 PLATFORM=$(uname -s)$MOD
 
+sudo apt install git
+sudo apt install curl
+
 printf "\n\n--->>> Bootstrap terminal %s setup, current directory is %s\n\n" "$SHELL" "$SPATH"
 printf '\e[36m'
 printf "Using %s...\n" "$PLATFORM"
@@ -38,16 +41,6 @@ systemctl --user start toggleInput.service
 # Install Pixi
 [[ ! -d $HOME/.pixi/bin ]] && eval curl -fsSL https://pixi.sh/install.sh | bash
 
-# Install eget and get mediamtx and sunshine
-[[ ! -f /usr/local/bin/eget ]] && curl https://zyedidia.github.io/eget.sh | sh && chmod +x eget && mv eget /usr/local/bin/eget
-[[ ! -f /usr/local/bin/mediamtx ]] && sudo eget bluenviron/mediamtx --to=/usr/local/bin && ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
-[[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine --to=./ && sudo dpkg -i ./sunshine-ubuntu-*-amd64.deb
-
-# install or update cogmoteGO
-curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | sh
-cogmoteGO service
-cogmoteGO service start
-
 # Install Netbird
 # Use the setup key from our password manager to replace XXX
 [[ ! -f $(which netbird) ]] && curl -fsSL https://pkgs.netbird.io/install.sh | sh
@@ -57,29 +50,21 @@ if [[ -n $ans ]]; then
 	netbird up --setup-key $ans
 fi
 
-# Install Zerotier -- deprecated in favor of netbird
-#curl -s https://install.zerotier.com | sudo bash
-#sudo systemctl enable zerotier-one.service
-#sudo zerotier-cli info
-
-# Install NoMachine
-[[ ! -f /usr/NX/bin/nxd ]] && curl -o $HOME/nomachine.deb -L https://web9001.nomachine.com/download/9.0/Linux/nomachine_9.0.188_11_amd64.deb && sudo dpkg -i $HOME/nomachine.deb
-
-
 # [Optional] Install MATLAB with MPM
 printf "Shall we use MPM to get MATLAB? [y / n]:  "
 read -r ans
 if [[ $ans == 'y' ]]; then
-	curl -L -o ~/bin/mpm https://www.mathworks.com/mpm/glnxa64/mpm
+	curl -L -o /usr/local/bin/mpm https://www.mathworks.com/mpm/glnxa64/mpm
 	version="R2025a"
 	products='MATLAB Curve_Fitting_Toolbox Instrument_Control_Toolbox MATLAB_Report_Generator Optimization_Toolbox Parallel_Computing_Toolbox Signal_Processing_Toolbox Statistics_and_Machine_Learning_Toolbox'
 	mkdir -p "$HOME/matlab$version"
 	mpath="$HOME/matlab$version"z
-	$HOME/bin/mpm install --no-gpu --no-jre --release=$version --destination=$HOME/matlab$version --products=$products
+	/usr/local/bin/mpm install --release=$version --destination=$HOME/matlab$version --products=$products
 fi
 
 # APT + snap + flatpak packages
 if [ "$PLATFORM" = "Linux" ]; then
+	sudo apt --fix-broken install
 	sudo apt -my install build-essential zsh git gparted vim curl file mc
 	sudo apt -my install gawk mesa-utils exfatprogs
 	sudo apt -my install freeglut3-dev 
@@ -100,6 +85,20 @@ if [ "$PLATFORM" = "Linux" ]; then
 	flatpak install -y flathub com.obsproject.Studio
 	
 fi
+
+# install or update cogmoteGO
+curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | sh
+cogmoteGO service
+cogmoteGO service start
+
+
+# Install NoMachine
+[[ ! -f /usr/NX/bin/nxd ]] && curl -o $HOME/nomachine.deb -L https://web9001.nomachine.com/download/9.0/Linux/nomachine_9.0.188_11_amd64.deb && sudo dpkg -i $HOME/nomachine.deb
+
+# Install eget and get mediamtx and sunshine
+[[ ! -f /usr/local/bin/eget ]] && curl https://zyedidia.github.io/eget.sh | sh && chmod +x eget && mv eget /usr/local/bin/eget
+[[ ! -f /usr/local/bin/mediamtx ]] && sudo eget bluenviron/mediamtx --to=/usr/local/bin && ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
+[[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine --to=./ && sudo dpkg -i ./sunshine-ubuntu-*-amd64.deb
 
 # Clone our core repos
 mkdir -p "$HOME/Code"

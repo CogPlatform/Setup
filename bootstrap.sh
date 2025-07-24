@@ -55,11 +55,10 @@ printf "Shall we use MPM to get MATLAB? [y / n]:  "
 read -r ans
 if [[ $ans == 'y' ]]; then
 	curl -L -o /usr/local/bin/mpm https://www.mathworks.com/mpm/glnxa64/mpm
+	chmod +x /usr/local/bin/mpm
 	version="R2025a"
 	products='MATLAB Curve_Fitting_Toolbox Instrument_Control_Toolbox MATLAB_Report_Generator Optimization_Toolbox Parallel_Computing_Toolbox Signal_Processing_Toolbox Statistics_and_Machine_Learning_Toolbox'
-	mkdir -p "$HOME/matlab$version"
-	mpath="$HOME/matlab$version"z
-	/usr/local/bin/mpm install --release=$version --destination=$HOME/matlab$version --products=$products
+	/usr/local/bin/mpm install --release=$version --products=$products
 fi
 
 # APT + snap + flatpak packages

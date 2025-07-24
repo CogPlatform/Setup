@@ -56,6 +56,9 @@ read -r ans
 if [[ $ans == 'y' ]]; then
 	curl -L -o /usr/local/bin/mpm https://www.mathworks.com/mpm/glnxa64/mpm
 	chmod +x /usr/local/bin/mpm
+	sudo mkdir -p /usr/local/MATLAB
+	sudo chown "$USER":"$USER" /usr/local/MATLAB
+	sudo chmod 777 /usr/local/MATLAB
 	version="R2025a"
 	products='MATLAB Curve_Fitting_Toolbox Instrument_Control_Toolbox MATLAB_Report_Generator Optimization_Toolbox Parallel_Computing_Toolbox Signal_Processing_Toolbox Statistics_and_Machine_Learning_Toolbox'
 	/usr/local/bin/mpm install --release=$version --products=$products
@@ -64,6 +67,8 @@ fi
 # APT + snap + flatpak packages
 if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt --fix-broken install
+	sudo apt update && sudo apt -y upgrade
+	sudo apt -my install apt-transport-https ca-certificates software-properties-common
 	sudo apt -my install build-essential zsh git gparted vim curl file mc
 	sudo apt -my install gawk mesa-utils exfatprogs
 	sudo apt -my install freeglut3-dev 

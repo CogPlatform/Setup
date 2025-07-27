@@ -125,7 +125,7 @@ alias sha='openssl sha'
 alias sha1='openssl sha1'
 alias sha256sum='shasum --algorithm 256'
 
-function ffmpeg-update() {
+function updateFFMPEG() {
 	cd ~
 	lver=$(ffmpeg -version | grep -owE 'N-\d+-[^-]+')
 	rver=$(curl -s https://evermeet.cx/ffmpeg/info/ffmpeg/snapshot | jq -r '.version')
@@ -321,6 +321,29 @@ function update() {
 	[[ -f $(which pixi) ]] && (printf '\n\n---> Updating \e[92mPIXI\e[m...\n'; pixi self-update; pixi global -v update)
 	[[ -e "$HOME/.x-cmd.root/bin/x-cmd" ]] &&  (printf '\n\n---> Updating \e[92mX-CMD\e[m...\n'; x-cmd upgrade; x-cmd env upgrade --all --force)
 	printf "\n=====>>> Finish Update @ \e[93m$(date)\e[m <<<=====\n"
+}
+
+function updateElvish () {
+	[[ -f $(which elvish) ]] && elvish -version
+	old_dir=$(pwd)
+	tmp_dir=$(mktemp -d -t ci-XXXXXXXXXX)
+	cd $tmp_dir
+	tos='linux'; [[ $PLATFORM = "Darwin" ]] && tos='darwin'
+	tpr='amd64'; 
+	if [[ $(uname -m) = 'arm64' || $(uname -m) = 'aarch64' ]]; then
+		tpr='arm64'
+	fi
+	printf "\nElvish download: OS = ${tos} | Processor = ${tpr}\n"
+	curl -C - -O "https://mirrors.tuna.tsinghua.edu.cn/elvish/$tos-$tpr/elvish-HEAD.tar.gz" &&
+	tar xvf elvish-HEAD.tar.gz &&
+	sudo mkdir -p /usr/local/bin &&
+	sudo rm -rf /usr/local/bin/elvish &&
+	sudo cp elvish /usr/local/bin &&
+	sudo chown $USER /usr/local/bin/elvish &&
+	sudo chmod +x /usr/local/bin/elvish
+	cd $old_dir
+	rm -rf $tmp_dir
+	[[ -f $(which elvish) ]] && elvish -version
 }
 
 # See all UDP ports open

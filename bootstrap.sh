@@ -114,6 +114,7 @@ cd "$HOME/Code" || exit
 [[ ! -d 'CageLab' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/CageLab.git
 [[ ! -d 'matlab-jzmq' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/matlab-jzmq.git
 [[ ! -d 'matmoteGO' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/matmoteGO.git
+[[ ! -d 'PTBSimia' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/PTBSimia.git
 cd ~ || exit
 
 # PTB expects libglut.so.3 but this is not present in Ubuntu 24.04 and later.

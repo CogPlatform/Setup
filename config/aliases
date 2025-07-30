@@ -250,7 +250,8 @@ lips() {
 function update() {
 	sudo printf "\n=====>>> Start Update @ \e[93m$(date)\e[m <<<=====\n"
 	myolddir=$(pwd)
-	ul=(~/.dotfiles ~/Code/Setup ~/Code/opticka ~/Code/octicka ~/Code/PTBSimia
+	ul=(~/.dotfiles ~/Code/Setup ~/Code/opticka ~/Code/octicka 
+	~/Code/PTBSimia	~/Code/PacmanTask
 	~/Code/matlab-jzmq ~/Code/matmoteGO ~/Code/CageLab
 	~/Code/Psychtoolbox ~/Code/fieldtrip ~/Code/Training ~/Code/Palamedes)
 	for x in $ul; do

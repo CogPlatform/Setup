@@ -102,8 +102,8 @@ curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | s
 
 # Install eget and get mediamtx and sunshine
 [[ ! -f /usr/local/bin/eget ]] && curl https://zyedidia.github.io/eget.sh | sh && chmod +x eget && mv eget /usr/local/bin/eget
-[[ ! -f /usr/local/bin/mediamtx ]] && sudo eget bluenviron/mediamtx --to=/usr/local/bin && ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
-[[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine --to=./ && sudo dpkg -i ./sunshine-ubuntu-*-amd64.deb
+[[ ! -f /usr/local/bin/mediamtx ]] && eget bluenviron/mediamtx --to=/usr/local/bin && ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
+[[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine -a '24.04' --to=./sunshine.deb && sudo dpkg -i ./sunshine.deb
 
 # Clone our core repos
 mkdir -p "$HOME/Code"

@@ -144,6 +144,7 @@ ln -svf "$SPATH/config/aliases" "$HOME/aliases"
 ln -svf "$SPATH/config/.tmux.conf" "$HOME"
 ln -svf "$SPATH/config/cagelab-monitor.yaml" "$HOME/.config/tmuxp"
 ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
+sudo cp "$SPATH/config/10-libuvc.conf" "/etc/udev/rules.d/"
 
 # switch from bash to zsh as the default shell
 if [ -x "$(which zsh)" ]; then

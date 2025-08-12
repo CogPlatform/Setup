@@ -3,7 +3,7 @@ export PROC=$(uname -m)
 export SPATH="$HOME/Code/Setup"
 
 #=================================================== - cagelab commands
-alias cagelab-zsh='ln -svf $SPATH/config/zshrc $HOME/.zshrc && ln -svf $SPATH/config/zsh-* $HOME && ln -svf $SPATH/config/aliases $HOME && source $HOME/.zshrc'
+alias cagelab-zsh='ln -svf $SPATH/config/zshrc $HOME/.zshrc && ln -svf $SPATH/config/zsh-* $HOME && ln -svf $SPATH/config/aliases $HOME && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests && source $HOME/.zshrc'
 alias cagelab-monitor='tmuxp load $HOME/.config/tmuxp/cagelab-monitor.yaml'
 alias cagelab-reset='systemctl --user restart cogmoteGO && systemctl --user restart theConductor'
 function cagelab-servicereset() {
@@ -110,7 +110,7 @@ alias sizes='du -sh * | sort -h'
 # File size
 alias fs="stat -f \"%z bytes\""
 
-# Download - it downloads the specified file
+# Download - it downloads the spezzcified file
 alias dl='curl -C - -O'
 # This one is really useful - it shares the current directory open in terminal
 # It shares this at the location localhost:8000

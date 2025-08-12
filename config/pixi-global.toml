@@ -129,3 +129,19 @@ exposed = { tmuxp = "tmuxp" }
 channels = ["conda-forge"]
 dependencies = { zenith = "*" }
 exposed = { zenith = "zenith" }
+
+[envs.zoxide]
+channels = ["conda-forge"]
+dependencies = { zoxide = "*" }
+exposed = { zoxide = "zoxide" }
+
+[envs.yazi]
+channels = ["conda-forge"]
+dependencies = { yazi = "*" }
+exposed = { ya = "ya", yazi = "yazi" }
+
+[envs.bat]
+channels = ["conda-forge"]
+dependencies = { bat = "*" }
+exposed = { bat = "bat" }
+

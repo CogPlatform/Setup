@@ -147,7 +147,7 @@ ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
 sudo cp "$SPATH/config/10-libuvc.conf" "/etc/udev/rules.d/"
 
 # switch from bash to zsh as the default shell
-if [ -x "$(which zsh)" ]; then
+if [ $SHELL == "/bin/bash" ] && [ -x "$(which zsh)" ]; then
 	printf 'Switching to use ZSH, you will need to reboot...\n'
 	chsh -s "$(which zsh)"
 fi

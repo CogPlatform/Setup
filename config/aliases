@@ -10,6 +10,7 @@ function cagelab-servicereset() {
 	cd "$HOME/.config/systemd/user" || return
 	sl=(theConductor.service mediamtx.service obs.service toggleInput.service)
 	for s in $sl; do
+		systemctl --user stop $s
 		systemctl --user disable $s
 		rm -f $s
 		ln -sf $HOME/Code/CageLab/software/services/$s $HOME/.config/systemd/user
@@ -18,7 +19,7 @@ function cagelab-servicereset() {
 	done
 	systemctl --user disable cogmoteGO.service
 	rm -f cogmoteGO.service
-	cogmoteGO service; cogmoteGO service start
+	cogmoteGO service
 	systemctl --user daemon-reload
 	systemctl --user restart cogmoteGO theConductor
 }

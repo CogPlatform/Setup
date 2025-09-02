@@ -145,3 +145,7 @@ channels = ["conda-forge"]
 dependencies = { bat = "*" }
 exposed = { bat = "bat" }
 
+[envs.btop]
+channels = ["conda-forge"]
+dependencies = { btop = "*" }
+exposed = { btop = "btop" }

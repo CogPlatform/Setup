@@ -75,6 +75,7 @@ if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install freeglut3-dev 
 	sudo apt -my install libglut-dev
 	sudo apt -my install openssh-server
+	sudo apt -my install i3 rofi nitrogen
 	sudo apt -my install p7zip-full p7zip-rar figlet jq htop 
 	sudo apt -my install libunrar5 libdc1394-25 libraw1394-11
 	sudo apt -my install gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
@@ -104,6 +105,7 @@ curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | s
 [[ ! -f /usr/local/bin/eget ]] && curl https://zyedidia.github.io/eget.sh | sh && chmod +x eget && mv eget /usr/local/bin/eget
 [[ ! -f /usr/local/bin/mediamtx ]] && eget bluenviron/mediamtx --to=/usr/local/bin && ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
 [[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine -a '24.04' --to=./sunshine.deb && sudo dpkg -i ./sunshine.deb
+[[ ! -f /usr/bin/rotz ]] && eget volllly/rotz --to=/usr/local/bin
 
 # Clone our core repos
 mkdir -p "$HOME/Code"

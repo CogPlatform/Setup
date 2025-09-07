@@ -8,6 +8,10 @@ alias cagelab-monitor='tmuxp load $HOME/.config/tmuxp/cagelab-monitor.yaml'
 alias cagelab-reset='systemctl --user restart cogmoteGO && systemctl --user restart theConductor'
 function cagelab-servicereset() {
 	cd "$HOME/.config/systemd/user" || return
+	systemctl --user disable cogmoteGO.service
+	rm -f cogmoteGO.service
+	cogmoteGO service
+	systemctl --user daemon-reload
 	sl=(theConductor.service mediamtx.service obs.service toggleInput.service)
 	for s in $sl; do
 		systemctl --user stop $s
@@ -17,10 +21,7 @@ function cagelab-servicereset() {
 		systemctl --user daemon-reload
 		systemctl --user enable $s
 	done
-	systemctl --user disable cogmoteGO.service
-	rm -f cogmoteGO.service
-	cogmoteGO service
-	systemctl --user daemon-reload
+	sleep 1
 	systemctl --user restart cogmoteGO theConductor
 }
 #==================================================== - How to reset a Linux clone

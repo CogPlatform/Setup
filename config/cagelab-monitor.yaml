@@ -4,7 +4,7 @@ windows:
     layout: main-vertical
     panes:
       - shell_command:
-          - zenith
+          - btop
         focus: true
       - shell_command:
           - journalctl --user --all -f -u cogmoteGO.service

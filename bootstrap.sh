@@ -136,6 +136,9 @@ rm -rf $HOME/.pixi/manifests
 mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
 [[ -f $(which pixi) ]] && pixi global sync
 
+# link some cagelab scripts
+ln -svf "$HOME/Code/CageLab/software/scripts/"* "$HOME/bin"
+
 # Link .zshrc
 [[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak
 ln -svf "$SPATH/config/zshrc" "$HOME/.zshrc"

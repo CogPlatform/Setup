@@ -7,7 +7,7 @@ alias cagelab-zsh='ln -svf $SPATH/config/zshrc $HOME/.zshrc && ln -svf $SPATH/co
 alias cagelab-monitor='tmuxp load $HOME/.config/tmuxp/cagelab-monitor.yaml'
 alias cagelab-reset='systemctl --user restart cogmoteGO && systemctl --user restart theConductor'
 alias cagelab-reset-OBS='systemctl --user stop mediamtx && systemctl --user stop obs && sleep 1 && systemctl --user start mediamtx && systemctl --user start obs'
-function cagelab-servicereset() {
+function cagelab-reset-services() {
 	cd "$HOME/.config/systemd/user" || return
 	systemctl --user disable cogmoteGO.service
 	rm -f cogmoteGO.service

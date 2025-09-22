@@ -1,8 +1,14 @@
-$obsPath   = (Join-Path $HOME, "scoop/apps/obs-studio/current/bin/64bit/obs64.exe")
-$logPath   = (Join-Path $HOME, "cagelab_logs/obs-monitor.log")
+$obsPath   = Join-Path -Path $HOME -ChildPath "scoop/apps/obs-studio/current/bin/64bit/obs64.exe"
+$obsWorkDir = Split-Path $obsPath -Parent
+$logPath   = Join-Path -Path $HOME -ChildPath "cagelab_logs/obs-monitor.log"
 $svcName   = "mediamtx"
 
-# Ensure log directory exists
+$obsArgs = @(
+    "--startstreaming"
+    "--disable-shutdown-check"
+    "--minimize-to-tray"
+)
+
 if (!(Test-Path (Split-Path $logPath))) {
     New-Item -Path (Split-Path $logPath) -ItemType Directory -Force | Out-Null
 }
@@ -25,14 +31,16 @@ function Wait-ForService {
 function Start-OBS {
     while ($true) {
         Write-Log "Starting OBS..."
-        $proc = Start-Process -FilePath $obsPath -PassThru
+        $proc = Start-Process -FilePath $obsPath `
+                              -WorkingDirectory $obsWorkDir `
+                              -ArgumentList $obsArgs `
+                              -PassThru
         Wait-Process -Id $proc.Id
         Write-Log "OBS exited unexpectedly. Restarting in 5 seconds..." "WARN"
         Start-Sleep -Seconds 5
     }
 }
 
-# Main flow
 Write-Log "========== Script started =========="
 Wait-ForService -Name $svcName
 Start-OBS

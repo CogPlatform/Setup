@@ -1,5 +1,7 @@
 # Cagelab 启动脚本使用手册
 
+[English](https://github.com/CogPlatform/Setup/blob/main/bootstrap/windows/README.md)
+
 ## 脚本总览
 
 由于 Windows 的限制，启动流程被拆分为 **三个脚本**，必须按照顺序执行：

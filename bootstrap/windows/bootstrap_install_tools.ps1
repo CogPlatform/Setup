@@ -1,38 +1,99 @@
+function Write-Info($msg) { Write-Host "[INFO]  $msg" -ForegroundColor Cyan }
+function Write-OK($msg) { Write-Host "[OK]    $msg" -ForegroundColor Green }
+function Write-Warn($msg) { Write-Host "[WARN]  $msg" -ForegroundColor Yellow }
+function Write-ErrorMsg($msg) { Write-Host "[ERROR] $msg" -ForegroundColor Red }
+
 #region by package manager
-winget install Microsoft.PowerShell --accept-source-agreements --accept-package-agreements
-winget install NoMachine.NoMachine --accept-source-agreements --accept-package-agreements
+Write-Info "Installing core packages via winget..."
+try {
+    winget install Microsoft.PowerShell --accept-source-agreements --accept-package-agreements
+    winget install NoMachine.NoMachine --accept-source-agreements --accept-package-agreements
+    Write-OK "winget packages installed."
+}
+catch {
+    Write-ErrorMsg "Failed to install winget packages: $_"
+}
 
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+Write-Info "Setting execution policy to RemoteSigned for CurrentUser..."
+try {
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+    Write-OK "Execution policy set to RemoteSigned."
+}
+catch {
+    Write-ErrorMsg "Failed to set execution policy: $_"
+}
 
-scoop install git
-scoop bucket add extras
-scoop bucket add nerd-fonts
+Write-Info "Installing Scoop..."
+try {
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        Write-Warn "Scoop is already installed. Skipping installation."
+    }
+    else {
+        Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+        Write-OK "Scoop installed."
+    }
+}
+catch {
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        Write-Warn "Scoop appears to be already installed despite error. Skipping."
+    }
+    else {
+        Write-ErrorMsg "Failed to install Scoop: $_"
+    }
+}
 
-scoop install netbird
-scoop install starship
-scoop install Maple-Mono-NF-CN
+Write-Info "Adding Scoop buckets..."
+try {
+    scoop install git
+    scoop bucket add extras
+    scoop bucket add nerd-fonts
+    Write-OK "Scoop buckets added."
+}
+catch {
+    Write-ErrorMsg "Failed to add Scoop buckets: $_"
+}
 
-scoop install nssm
-scoop install mediamtx
-scoop install obs-studio
-scoop install sunshine
+Write-Info "Installing packages via Scoop..."
+$packages = @("netbird", "starship", "Maple-Mono-NF-CN", "nssm", "mediamtx", "obs-studio", "sunshine")
+foreach ($pkg in $packages) {
+    Write-Info "Installing $pkg..."
+    try {
+        scoop install $pkg
+        Write-OK "$pkg installed."
+    }
+    catch {
+        Write-ErrorMsg "Failed to install ${pkg}: $_"
+    }
+}
 
-Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.ps1' | Invoke-Expression
+Write-Info "Installing cogmoteGO..."
+try {
+    Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.ps1' | Invoke-Expression
+    Write-OK "cogmoteGO installed."
+}
+catch {
+    Write-ErrorMsg "Failed to install cogmoteGO: $_"
+}
 #endregion
 
 #region by git clone
-# Set the parent directory for code repositories
 $parentDir = Join-Path $HOME "Code"
 
-# Check and create parent directory if it doesn't exist
+Write-Info "Ensuring code directory exists..."
 if (!(Test-Path $parentDir)) {
-    Write-Host "Creating code directory: $parentDir" -ForegroundColor Green
-    New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+    try {
+        New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+        Write-OK "Created directory: $parentDir"
+    }
+    catch {
+        Write-ErrorMsg "Failed to create directory ${parentDir}: $_"
+    }
+}
+else {
+    Write-OK "Directory already exists: $parentDir"
 }
 
-# Define the list of repositories to clone
-Write-Host "`nPreparing to clone the following repositories:" -ForegroundColor Cyan
+Write-Info "Preparing repositories list..."
 $repos = @(
     "https://gitee.com/CogPlatform/Setup.git",
     "https://gitee.com/CogPlatform/Psychtoolbox.git",
@@ -42,33 +103,30 @@ $repos = @(
     "https://gitee.com/CogPlatform/matmoteGO.git",
     "https://gitee.com/CogPlatform/PTBSimia.git"
 )
-
-# Display all repository names
 foreach ($repo in $repos) {
     $repoName = [System.IO.Path]::GetFileNameWithoutExtension($repo)
-    Write-Host "  - $repoName" -ForegroundColor White
+    Write-Info "  - $repoName"
 }
 
-Write-Host "`nStarting clone process..." -ForegroundColor Cyan
-
-# Clone each repository
+Write-Info "Starting clone process..."
 foreach ($repo in $repos) {
     $repoName = [System.IO.Path]::GetFileNameWithoutExtension($repo)
     $targetPath = Join-Path $parentDir $repoName
 
     if (Test-Path $targetPath) {
-        Write-Host "`nSkipping $repoName (directory already exists)" -ForegroundColor Yellow
+        Write-Warn "Skipping $repoName (directory already exists)."
     }
     else {
-        Write-Host "`nCloning $repoName..." -ForegroundColor Green
+        Write-Info "Cloning $repoName..."
         git clone --recurse-submodules --depth 1 $repo $targetPath
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "Successfully cloned $repoName" -ForegroundColor Green
-        } else {
-            Write-Host "Failed to clone $repoName" -ForegroundColor Red
+            Write-OK "Successfully cloned $repoName."
+        }
+        else {
+            Write-ErrorMsg "Failed to clone $repoName."
         }
     }
 }
 
-Write-Host "`nClone process completed!" -ForegroundColor Cyan
+Write-OK "Clone process completed."
 #endregion

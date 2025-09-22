@@ -152,6 +152,7 @@ mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.
 # link some cagelab stuff
 ln -svf "$HOME/Code/CageLab/software/scripts/"* "$HOME/bin"
 ln -svf "$HOME/Code/Setup/config/sshconfig" "$HOME/.ssh/config"
+ln -sfv "$HOME/Code/Setup/config/.rsync-excludes" "$HOME/.config"
 
 # Link .zshrc
 [[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak

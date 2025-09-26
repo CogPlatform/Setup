@@ -13,14 +13,13 @@ mkdir -p "$HOME/.config/tmuxp"
 sudo chown -R "$USER":"$USER" /usr/local/bin
 
 # Link pixi-global.toml
-rm -rf $HOME/.pixi/manifests
-mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
+[[ ! -f "$HOME/.pixi/manifests/pixi-global.toml" ]] && mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
 [[ -f $(which pixi) ]] && pixi global sync
 
 # link some cagelab stuff
 ln -svf "$HOME/Code/CageLab/software/scripts/"* "$HOME/bin"
 ln -sfv "$HOME/Code/CageLab/software/services/"*.service "$HOME/.config/systemd/user"
-ln -svf "$HOME/Code/Setup/config/sshconfig" "$HOME/.ssh/config"
+[[ ! -f "$HOME/.ssh/config" ]] && ln -svf "$HOME/Code/Setup/config/sshconfig" "$HOME/.ssh/config"
 ln -sfv "$HOME/Code/Setup/config/.rsync-excludes" "$HOME/.config"
 
 # Link .zshrc
@@ -30,7 +29,7 @@ ln -svf "$SPATH/config/zsh-"* "$HOME"
 ln -svf "$SPATH/config/aliases" "$HOME/aliases"
 
 # few others
-ln -svf "$SPATH/config/.tmux.conf" "$HOME"
+[[ ! -f "$HOME/.config/starship.toml" ]] && ln -svf "$SPATH/config/.tmux.conf" "$HOME"
 ln -svf "$SPATH/config/cagelab-monitor.yaml" "$HOME/.config/tmuxp"
-ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
+[[ ! -f "$HOME/.config/starship.toml" ]] && ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
 sudo cp "$SPATH/config/10-libuvc.rules" "/etc/udev/rules.d/"

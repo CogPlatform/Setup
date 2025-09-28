@@ -1,5 +1,15 @@
 # Shared configuration for all CAGELAB systems
 # link this to ~/.ssh/config
+Host cog12
+	HostName 192.168.3.66
+	User cog
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host win420
+	HostName 192.168.3.99
+	User cog
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
 Host cog21
 	HostName cog21.cloud.lab
 	User cog
@@ -20,7 +30,7 @@ Host cagelab-002
 	User cagelab
 	IdentityFile ~/.ssh/cagelab
 	IdentitiesOnly yes
-Host cagelab-003
+Host cagelab-003 
 	HostName 192.168.3.13
 	User cagelab
 	IdentityFile ~/.ssh/cagelab

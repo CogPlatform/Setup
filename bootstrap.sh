@@ -27,6 +27,7 @@ mkdir -p "$HOME/.local/bin"
 mkdir -p "$HOME/.config/systemd/user"
 mkdir -p "$HOME/.config/tmuxp"
 sudo chown -R "$USER":"$USER" /usr/local/bin
+sudo chown -R "$USER":"$USER" /usr/local/etc
 
 # this section disables the touch screen at start
 # replace with name of the touch panel device
@@ -42,13 +43,13 @@ sudo ln -svf "$SPATH/config/toggleInput" /usr/local/bin/toggleInput &&
 	systemctl --user enable toggleInput.service &&
 	systemctl --user start toggleInput.service
 
-# Install X-CMD (cross-platform script support)
+#================================================= Install X-CMD (cross-platform script support)
 [[ ! -d $HOME/.x-cmd.root ]] && eval "$(curl https://get.x-cmd.com)"
 
-# Install Pixi (cross-platform package manager)
+#================================================= Install Pixi (cross-platform package manager)
 [[ ! -d $HOME/.pixi/bin ]] && eval curl -fsSL https://pixi.sh/install.sh | bash
 
-# Install Netbird
+#============================================== Install Netbird
 # Use the setup key from our password manager to replace XXX
 [[ ! -f $(which netbird) ]] && curl -fsSL https://pkgs.netbird.io/install.sh | sh
 printf "Enter a KEY to register netbird (blank to ignore): "
@@ -57,7 +58,7 @@ if [[ -n $ans ]]; then
 	netbird up --setup-key $ans
 fi
 
-# [Optional] Install MATLAB with MPM
+#============================================== [Optional] Install MATLAB with MPM
 printf "Shall we use MPM to get MATLAB? [y / n]:  "
 read -r ans
 if [[ $ans == 'y' ]]; then
@@ -71,7 +72,7 @@ if [[ $ans == 'y' ]]; then
 fi
 [[ -f $mpath ]] && ln -sfv /usr/local/MATLAB/$mversion/bin/matlab /usr/local/bin
 
-# APT + snap + flatpak packages
+#============================================== APT + snap + flatpak packages
 if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt --fix-broken install
 	sudo apt update && sudo apt -y full-upgrade
@@ -99,23 +100,23 @@ if [ "$PLATFORM" = "Linux" ]; then
 	
 fi
 
-# install or update cogmoteGO
+#============================================== install or update cogmoteGO
 curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | sh &&
 	cogmoteGO service &&
 	cogmoteGO service start
 
-# Install NoMachine
+#=============================================== Install NoMachine
 [[ ! -f /usr/NX/bin/nxd ]] && 
 	curl -o $HOME/nomachine.deb -L https://web9001.nomachine.com/download/9.0/Linux/nomachine_9.0.188_11_amd64.deb && 
 	sudo dpkg -i $HOME/nomachine.deb
 
-# Install eget and get mediamtx and sunshine
+#=============================================== Install eget and get mediamtx and sunshine
 [[ ! -f /usr/local/bin/eget ]] && curl https://zyedidia.github.io/eget.sh | sh && chmod +x eget && mv eget /usr/local/bin/eget
 [[ ! -f /usr/local/bin/mediamtx ]] && eget bluenviron/mediamtx --to=/usr/local/bin && ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
 [[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine -a '24.04' --to=./sunshine.deb && sudo dpkg -i ./sunshine.deb
 [[ ! -f /usr/bin/rotz ]] && eget volllly/rotz --to=/usr/local/bin
 
-# Clone our core repos from gitee
+#============================================= Clone our core repos from gitee
 mkdir -p "$HOME/Code"
 cd "$HOME/Code" || exit
 [[ ! -d 'Setup' ]] && git clone --recurse-submodules https://gitee.com/CogPlatform/Setup.git
@@ -133,7 +134,7 @@ cd ~ || exit
 [[ -f "/usr/lib/x86_64-linux-gnu/libglut.so.3.12.0" ]] && 
 	sudo ln -svf /usr/lib/x86_64-linux-gnu/libglut.so.3.12.0 /usr/lib/x86_64-linux-gnu/libglut.so.3
 
-# Setup PTB and opticka path:
+#============================================ Setup PTB and opticka path:
 if [[ -f $mpath ]]; then
 	printf "Shall we setup MATLAB path? [y / n]:  "
 	read -r ans
@@ -144,10 +145,10 @@ if [[ -f $mpath ]]; then
 	cd "$HOME" || exit
 fi
 
-# Make sure all the symlinks are correct
+#============================================ Make sure all the symlinks are correct
 "$SPATH/makelinks.sh"
 
-# switch from bash to zsh as the default shell
+#=========================================== switch from bash to zsh as the default shell
 if [ $SHELL == "/bin/bash" ] && [ -x "$(which zsh)" ]; then
 	printf 'Switching to use ZSH, you will need to reboot...\n'
 	chsh -s "$(which zsh)"

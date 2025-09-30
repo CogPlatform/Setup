@@ -10,17 +10,20 @@ mkdir -p "$HOME/bin"
 mkdir -p "$HOME/.local/bin"
 mkdir -p "$HOME/.config/systemd/user"
 mkdir -p "$HOME/.config/tmuxp"
-sudo chown -R "$USER":"$USER" /usr/local/bin
+sudo chown -R "$USER":"$USER" /usr/local/bin # place our tools like mediamtx here
+sudo chown -R "$USER":"$USER" /usr/local/etc # mediamtx config goes here
+
 
 # Link pixi-global.toml
 [[ ! -f "$HOME/.pixi/manifests/pixi-global.toml" ]] && mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
 [[ -f $(which pixi) ]] && pixi global sync
 
 # link some cagelab stuff
+ln -sfv "$SPATH/config/mediamtx.yml" "/usr/local/etc"
 ln -svf "$HOME/Code/CageLab/software/scripts/"* "$HOME/bin"
 ln -sfv "$HOME/Code/CageLab/software/services/"*.service "$HOME/.config/systemd/user"
 [[ ! -f "$HOME/.ssh/config" ]] && ln -svf "$HOME/Code/Setup/config/sshconfig" "$HOME/.ssh/config"
-ln -sfv "$HOME/Code/Setup/config/.rsync-excludes" "$HOME/.config"
+ln -sfv "$SPATH/config/.rsync-excludes" "$HOME/.config"
 
 # Link .zshrc
 [[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak

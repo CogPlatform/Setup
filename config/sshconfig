@@ -1,5 +1,10 @@
 # Shared configuration for all CAGELAB systems
 # link this to ~/.ssh/config
+Host cog5
+	HostName cog5.cloud.lab
+	User cog5
+	IdentityFile ~/.ssh/id_rsa
+	IdentitiesOnly yes
 Host cog12
 	HostName 192.168.3.66
 	User cog

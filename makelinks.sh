@@ -26,10 +26,10 @@ ln -sfv "$HOME/Code/CageLab/software/services/"*.service "$HOME/.config/systemd/
 ln -sfv "$SPATH/config/.rsync-excludes" "$HOME/.config"
 
 # Link .zshrc
-[[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.zshrc"$(date -Iseconds)".bak
+[[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.config/.zshrc"$(date -Iseconds)".bak
 ln -svf "$SPATH/config/zshrc" "$HOME/.zshrc"
-ln -svf "$SPATH/config/zsh-"* "$HOME"
-ln -svf "$SPATH/config/aliases" "$HOME/aliases"
+ln -svf "$SPATH/config/zsh-"* "$HOME/.config"
+ln -svf "$SPATH/config/aliases" "$HOME/.config"
 
 # few others
 [[ ! -f "$HOME/.config/starship.toml" ]] && ln -svf "$SPATH/config/.tmux.conf" "$HOME"

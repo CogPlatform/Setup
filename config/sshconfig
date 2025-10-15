@@ -25,6 +25,56 @@ Host cagelab-dev
 	User cagelab
 	IdentityFile ~/.ssh/cagelab
 	IdentitiesOnly yes
+Host cagelab-001
+	HostName cagelab-001.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host cagelab-002
+	HostName cagelab-002.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host cagelab-003
+	HostName cagelab-003.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host cagelab-004
+	HostName cagelab-004.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host cagelab-005
+	HostName cagelab-005.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host pacman-001
+	HostName pacman-001.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host pacman-002
+	HostName pacman-002.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host pacman-003
+	HostName pacman-003.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host pacman-004
+	HostName pacman-004.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host pacman-005
+	HostName pacman-005.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
 Host cagelab-001i
 	HostName 192.168.3.11
 	User cagelab
@@ -112,55 +162,3 @@ Host codeberg.org
 	IdentitiesOnly yes
 Host instances.cogplatform.cc/001
 	ProxyCommand /opt/homebrew/bin/cloudflared access ssh --hostname %h
-
-# Additional configurations with hostname patterns
-Host cagelab-001
-	HostName cagelab-001.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes
-Host cagelab-002
-	HostName cagelab-002.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes
-Host cagelab-003
-	HostName cagelab-003.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes
-Host cagelab-004
-	HostName cagelab-004.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes
-Host cagelab-005
-	HostName cagelab-005.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes
-Host pacman-001
-	HostName pacman-001.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes
-Host pacman-002
-	HostName pacman-002.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes
-Host pacman-003
-	HostName pacman-003.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes
-Host pacman-004
-	HostName pacman-004.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes
-Host pacman-005
-	HostName pacman-005.cloud.lab
-	User cagelab
-	IdentityFile ~/.ssh/cagelab
-	IdentitiesOnly yes

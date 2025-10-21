@@ -28,7 +28,7 @@ exec --no-startup-id nm-applet
 exec --no-startup-id /usr/bin/gnome-keyring-daemon --start --components=ssh,secrets,pkcs11
 
 # wallpaper
-exec --no-startup-id /usr/bin/nitrogen --set-scaled ~/.dotfiles/terminals/colors-dark.png
+exec --no-startup-id /usr/bin/nitrogen --set-scaled ~/.dotfiles/terminals/everforest.jpg
 
 # Configure space between windows and to the screen edges.
 gaps inner 5px
@@ -54,7 +54,9 @@ for_window [title="xclock"] floating enable
 for_window [class="copyq"] floating enable
 for_window [title="Bitwarden"] floating enable
 for_window [title="CageLab-GUI"] floating enable
-#for_window [title=" "] floating enable
+for_window [title="^PTB Onscreen Window"] floating enable
+for_window [title="^Figures"] floating enable
+for_window [title="^Opticka"] floating enable
 
 ###################################### KEYS
 
@@ -66,6 +68,8 @@ bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
 bindsym $mod+Shift+space exec --no-startup-id "rofi -show combi -modes combi -combi-modes 'window,drun,run'"
+bindsym $mod+d exec --no-startup-id "rofi -show combi -modes combi -combi-modes 'window,drun,run'"
+
 # A more modern dmenu replacement is rofi:
 # bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
@@ -104,12 +108,9 @@ bindsym $mod+backslash split v
 bindsym $mod+Shift+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+Shift+slash layout toggle split
-bindsym $mod+Shift+comma layout tabbed
+bindsym $mod+Shift+comma layout toggle tabbed stacking
 bindsym $mod+Shift+period floating toggle
-
-# toggle tiling / floating
-bindsym $mod+Shift+f layout stacking
+bindsym $mod+Shift+slash layout toggle splitv splith
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
@@ -162,7 +163,7 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec "i3-nagbar -f 'pango:Alegreya Sans 20' -t warning -m 'Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # service mode 
 mode "service" {

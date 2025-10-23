@@ -4,27 +4,7 @@ export SPATH="$HOME/Code/Setup"
 
 #=================================================== - cagelab commands
 alias cagelab-zsh='ln -svf $SPATH/config/zshrc $HOME/.zshrc && ln -svf $SPATH/config/zsh-* $HOME && ln -svf $SPATH/config/aliases $HOME && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests && source $HOME/.zshrc'
-#alias cagelab-monitor='tmuxp load $HOME/.config/tmuxp/cagelab-monitor.yaml'
-#alias cagelab-reset='systemctl --user restart cogmoteGO && systemctl --user restart theConductor'
-#alias cagelab-reset-OBS='systemctl --user stop mediamtx && systemctl --user stop obs && sleep 1 && systemctl --user start mediamtx && systemctl --user start obs'
-function cagelab-reset-services() {
-	cd "$HOME/.config/systemd/user" || return
-	systemctl --user disable cogmoteGO.service
-	rm -f cogmoteGO.service
-	cogmoteGO service
-	systemctl --user daemon-reload
-	sl=(theConductor.service mediamtx.service obs.service toggleInput.service)
-	for s in $sl; do
-		systemctl --user stop $s
-		systemctl --user disable $s
-		rm -f $s
-		ln -sf $HOME/Code/CageLab/software/services/$s $HOME/.config/systemd/user
-		systemctl --user daemon-reload
-		systemctl --user enable $s
-	done
-	sleep 1
-	systemctl --user restart cogmoteGO theConductor
-#}
+
 #==================================================== - How to reset a Linux clone
 function cloneReset () { 
 	# This function resets the machine ID and hostname for a Linux clone. It
@@ -283,20 +263,22 @@ function update() {
 	~/Code/PTBSimia	~/Code/PacmanTask
 	~/Code/matlab-jzmq ~/Code/matmoteGO ~/Code/CageLab
 	~/Code/Psychtoolbox ~/Code/fieldtrip ~/Code/Training ~/Code/Palamedes)
-	for x in $ul; do
+	for x in "${ul[@]}"; do
 		if [[ -d ${x}/.git ]]; then
 			printf "\n\n---> Updating \e[92m%s\e[m...\n" "${x}"
-			cd ${x}
-			oldbranch=$(git branch | grep -e '*' | cut -b 3-)
+			cd "${x}" || exit
+			oldbranch=$(git branch | grep -e '\*' | cut -b 3-)
 
-			# Check for local changes
+			# Check for local changes and stash if needed
+			stashed=false
 			if [[ -n $(git status --porcelain) ]]; then
 				printf "\t\t---> Found local changes in \e[93m%s\e[m, stashing...\n" "${x}"
 				git stash save "Auto-stashed by update function $(date)"
+				stashed=true
 				printf "\t\t---> Changes stashed. Use 'git stash list/pop' to recover\n"
 			fi
 
-			if [[ ! ${oldbranch} =~ "master|main" ]]; then
+			if [[ ! ${oldbranch} =~ master\|main ]]; then
 				if [[ ${x} =~ fieldtrip ]]; then
 					git checkout umaster
 				elif [[ ${x} =~ Palamedes ]]; then
@@ -307,15 +289,23 @@ function update() {
 			fi
 			git pull
 			git status
-			if [[ -n $(git remote 2>/dev/null | grep upstream) ]]; then
+			if git remote 2>/dev/null | grep -q upstream; then
 				printf "\t\t---> Fetching \e[92m%s\e[m upstream...\n" "${x}"
 				git fetch -v upstream
 				if [[ ! ${x} =~ Psychtoolbox ]]; then
 					git merge --ff-only -v upstream/master
 				fi
 			fi
-			if [[ ! ${oldbranch} =~ master ]]; then
-				git checkout ${oldbranch}
+			if [[ ! ${oldbranch} =~ 'master' ]]; then
+				git checkout "${oldbranch}"
+			fi
+
+			# Pop stashed changes after updating
+			if [[ "$stashed" == true ]]; then
+				printf "\t\t---> Restoring stashed changes in \e[93m%s\e[m...\n" "${x}"
+				if ! git stash pop; then
+					printf "\t\t---> WARNING: Could not pop stash. Please resolve manually.\n"
+				fi
 			fi
 		fi
 	done

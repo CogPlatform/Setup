@@ -3,8 +3,8 @@ export PROC=$(uname -m)
 export SPATH="$HOME/Code/Setup"
 
 #=================================================== - cagelab commands
-alias cagelab-zsh='ln -svf $SPATH/config/zshrc $HOME/.zshrc && ln -svf $SPATH/config/zsh-* $HOME && ln -svf $SPATH/config/aliases $HOME && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests && source $HOME/.zshrc'
-
+alias cagelab-zsh='ln -svf $SPATH/config/zshrc $HOME/.zshrc && ln -svf $SPATH/config/zsh-* $HOME/.config && ln -svf $SPATH/config/aliases $HOME.config && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests && source $HOME/.zshrc'
+# other cagelab commands are in CageLab repository
 #==================================================== - How to reset a Linux clone
 function cloneReset () { 
 	# This function resets the machine ID and hostname for a Linux clone. It

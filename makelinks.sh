@@ -13,7 +13,6 @@ mkdir -p "$HOME/.config/tmuxp"
 sudo chown -R "$USER":"$USER" /usr/local/bin # place our tools like mediamtx here
 sudo chown -R "$USER":"$USER" /usr/local/etc # mediamtx config goes here
 
-
 # Link pixi-global.toml
 [[ ! -f "$HOME/.pixi/manifests/pixi-global.toml" ]] && mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
 [[ -f $(which pixi) ]] && pixi global sync
@@ -22,8 +21,9 @@ sudo chown -R "$USER":"$USER" /usr/local/etc # mediamtx config goes here
 ln -sfv "$SPATH/config/mediamtx.yml" "/usr/local/etc"
 ln -svf "$HOME/Code/CageLab/software/scripts/"* "$HOME/bin"
 ln -sfv "$HOME/Code/CageLab/software/services/"*.service "$HOME/.config/systemd/user"
-# Link theConductor service for older MATLAB if R2025a doesn't exist
-[[ ! -d "/usr/local/MATLAB/R2025a" ]] && ln -sfv "$HOME/Code/CageLab/software/services/theConductor2024a.dservice" "$HOME/.config/systemd/user/theConductor.service"
+# Link theConductor service for newer MATLAB if present
+[[ -d "/usr/local/MATLAB/R2025a" ]] && ln -sfv "$HOME/Code/CageLab/software/services/theConductor2025a.dservice" "$HOME/.config/systemd/user/theConductor.service"
+[[ -d "/usr/local/MATLAB/R2025b" ]] && ln -sfv "$HOME/Code/CageLab/software/services/theConductor2025b.dservice" "$HOME/.config/systemd/user/theConductor.service"
 
 [[ ! -f "$HOME/.ssh/config" ]] && ln -svf "$HOME/Code/Setup/config/sshconfig" "$HOME/.ssh/config"
 ln -sfv "$SPATH/config/.rsync-excludes" "$HOME/.config"

@@ -125,6 +125,11 @@ Host pacman-005i
 	User cagelab
 	IdentityFile ~/.ssh/cagelab
 	IdentitiesOnly yes
+Host prisys-alyx
+	HostName prisys-alyx.cloud.lab
+	User prisys
+	IdentityFile ~/.ssh/prisys
+	IdentitiesOnly yes
 Host prisys-001
 	HostName prisys-001.cloud.lab
 	User prisys
@@ -147,6 +152,31 @@ Host prisys-004
 	IdentitiesOnly yes
 Host prisys-005
 	HostName prisys-005.cloud.lab
+	User prisys
+	IdentityFile ~/.ssh/prisys
+	IdentitiesOnly yes
+Host prisys-001i
+	HostName 192.100.2.226
+	User prisys
+	IdentityFile ~/.ssh/prisys
+	IdentitiesOnly yes
+Host prisys-002i
+	HostName 192.100.2.3
+	User prisys
+	IdentityFile ~/.ssh/prisys
+	IdentitiesOnly yes
+Host prisys-003i
+	HostName 192.100.2.214
+	User prisys
+	IdentityFile ~/.ssh/prisys
+	IdentitiesOnly yes
+Host prisys-004i
+	HostName 192.100.2.125
+	User prisys
+	IdentityFile ~/.ssh/prisys
+	IdentitiesOnly yes
+Host prisys-005i
+	HostName 192.100.2.215
 	User prisys
 	IdentityFile ~/.ssh/prisys
 	IdentitiesOnly yes

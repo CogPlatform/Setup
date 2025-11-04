@@ -24,7 +24,6 @@ ln -sfv "$HOME/Code/CageLab/software/services/"*.service "$HOME/.config/systemd/
 # Link theConductor service for newer MATLAB if present
 [[ -d "/usr/local/MATLAB/R2025a" ]] && ln -sfv "$HOME/Code/CageLab/software/services/theConductor2025a.dservice" "$HOME/.config/systemd/user/theConductor.service"
 [[ -d "/usr/local/MATLAB/R2025b" ]] && ln -sfv "$HOME/Code/CageLab/software/services/theConductor2025b.dservice" "$HOME/.config/systemd/user/theConductor.service"
-
 [[ ! -f "$HOME/.ssh/config" ]] && ln -svf "$HOME/Code/Setup/config/sshconfig" "$HOME/.ssh/config"
 ln -sfv "$SPATH/config/.rsync-excludes" "$HOME/.config"
 

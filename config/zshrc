@@ -53,14 +53,16 @@ else
 	done
 	[[ -d "/usr/lib/jvm/java-17-openjdk/amd64" ]] && export JAVA_HOME="/usr/lib/jvm/java-17-openjdk/amd64" # Linux Java
 	[[ -d "/usr/lib/jvm/java-17-openjdk/amd64" ]] && export MATLAB_JAVA="/usr/lib/jvm/java-17-openjdk/amd64" # Linux Java
+	[[ -d "/usr/lib/jvm/java-21-openjdk/amd64" ]] && export JAVA_HOME="/usr/lib/jvm/java-21-openjdk/amd64" # Linux Java
+	[[ -d "/usr/lib/jvm/java-21-openjdk/amd64" ]] && export MATLAB_JAVA="/usr/lib/jvm/java-21-openjdk/amd64" # Linux Java
 	[[ -d "$JAVA_HOME" ]] && export path=("${JAVA_HOME}bin" $path) # Linux JDK
 fi
 
 #------------------------------------FINALISE PATH
 pth=("/opt/amdgpu-pro/bin" "opt/amdgpu/bin"
+	"$HOME/.cache/lm-studio/bin"
 	"/usr/local/sbin" "/usr/local/bin"
 	"/snap/bin" "$HOME/.local/bin" "$HOME/bin" 
-	"$HOME/.cache/lm-studio/bin"
 	"$HOME/.pixi/envs/ruby/share/rubygems/bin" "$HOME/.pixi/bin")
 for p in $pth; do
 	if [[ -d $p ]]; then

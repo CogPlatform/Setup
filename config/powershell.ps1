@@ -67,7 +67,7 @@ function update {
 				& git checkout $currentBranch | Out-Null
 			}
 		} catch {
-			Write-Warning "Failed to update $repo: $_"
+			Write-Warning "Failed to update $($repo): $($_)"
 		} finally {
 			Pop-Location
 		}

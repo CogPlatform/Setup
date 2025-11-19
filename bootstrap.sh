@@ -82,14 +82,16 @@ if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install freeglut3-dev 
 	sudo apt -my install libglut-dev
 	sudo apt -my install openssh-server
-	sudo apt -my install i3 rofi nitrogen
+	sudo apt -my install i3 rofi nitrogen xdotool
 	sudo apt -my install p7zip-full p7zip-rar figlet jq htop 
 	sudo apt -my install libunrar5 libdc1394-25 libraw1394-11
 	sudo apt -my install gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
 	sudo apt -my install synaptic zathura zathura-pdf-poppler zathura-ps
 	sudo apt -my install snapd python3-pip
-	sudo apt -my install openjdk-17-jre
+	sudo apt -my install openjdk-21-jre
 	sudo apt -my install flatpak
+	sudo apt -my install wakeonlan etherwake
+	sudo apt -my install python3-pip python3-venv
 
 	# Install some snap packages
 	[[ ! -f $(which code) ]] && sudo snap install --classic code
@@ -107,14 +109,14 @@ curl -sS https://raw.githubusercontent.com/Ccccraz/cogmoteGO/main/install.sh | s
 
 #=============================================== Install NoMachine
 [[ ! -f /usr/NX/bin/nxd ]] && 
-	curl -o $HOME/nomachine.deb -L https://web9001.nomachine.com/download/9.0/Linux/nomachine_9.0.188_11_amd64.deb && 
-	sudo dpkg -i $HOME/nomachine.deb
+	curl -L -o $HOME/Downloads/nomachine.deb https://web9001.nomachine.com/download/9.2/Linux/nomachine_9.2.18_3_amd64.deb &&
+	sudo dpkg -i $HOME/Downloads/nomachine.deb
 
 #=============================================== Install eget and get mediamtx and sunshine
 [[ ! -f /usr/local/bin/eget ]] && curl https://zyedidia.github.io/eget.sh | sh && chmod +x eget && mv eget /usr/local/bin/eget
 [[ ! -f /usr/local/bin/mediamtx ]] && eget bluenviron/mediamtx --to=/usr/local/bin && ln -svf /usr/local/bin/mediamtx $HOME/.local/bin
-[[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine -a '24.04' --to=./sunshine.deb && sudo dpkg -i ./sunshine.deb
-[[ ! -f /usr/bin/rotz ]] && eget volllly/rotz --to=/usr/local/bin
+[[ ! -f /usr/bin/sunshine ]] && eget LizardByte/Sunshine -a '24.04' --to=./sunshine.deb
+[[ ! -f /usr/bin/rotz ]] && eget volllly/rotz --to=/usr/local/bin -a gnu.zip
 
 #============================================= Clone our core repos from gitee
 mkdir -p "$HOME/Code"

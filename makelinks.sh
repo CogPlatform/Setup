@@ -13,10 +13,6 @@ mkdir -p "$HOME/.config/tmuxp"
 sudo chown -R "$USER":"$USER" /usr/local/bin # place our tools like mediamtx here
 sudo chown -R "$USER":"$USER" /usr/local/etc # mediamtx config goes here
 
-# Link pixi-global.toml
-[[ ! -f "$HOME/.pixi/manifests/pixi-global.toml" ]] && mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
-[[ -f $(which pixi) ]] && pixi global sync
-
 # link some cagelab stuff
 ln -sfv "$SPATH/config/mediamtx.yml" "/usr/local/etc"
 ln -svf "$HOME/Code/CageLab/software/scripts/"* "$HOME/bin"
@@ -34,7 +30,11 @@ ln -svf "$SPATH/config/zsh-"* "$HOME/.config"
 ln -svf "$SPATH/config/aliases" "$HOME/.config"
 
 # few others
-[[ ! -f "$HOME/.config/starship.toml" ]] && ln -svf "$SPATH/config/.tmux.conf" "$HOME"
+[[ ! -f "$HOME/.tmux.conf" ]] && ln -svf "$SPATH/config/.tmux.conf" "$HOME"
 ln -svf "$SPATH/config/cagelab-monitor.yaml" "$HOME/.config/tmuxp"
 [[ ! -f "$HOME/.config/starship.toml" ]] && ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
 sudo cp "$SPATH/config/10-libuvc.rules" "/etc/udev/rules.d/"
+
+# Link pixi-global.toml
+[[ ! -f "$HOME/.pixi/manifests/pixi-global.toml" ]] && mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
+[[ -f $(which pixi) ]] && pixi global sync

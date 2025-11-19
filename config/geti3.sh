@@ -4,5 +4,5 @@
 sudo apt install ./keyring.deb
 echo "deb [signed-by=/usr/share/keyrings/sur5r-keyring.gpg] http://debian.sur5r.net/i3/ $(grep '^VERSION_CODENAME=' /etc/os-release | cut -f2 -d=) universe" | sudo tee /etc/apt/sources.list.d/sur5r-i3.list
 sudo apt update
-sudo apt install i3
-sudo apt install upgrade -y
+sudo apt install i3 -y
+sudo apt upgrade -y

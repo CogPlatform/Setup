@@ -30,6 +30,7 @@ ln -svf "$SPATH/config/zsh-"* "$HOME/.config"
 ln -svf "$SPATH/config/aliases" "$HOME/.config"
 
 # few others
+ln -svf "$SPATH/config/i3config" "$HOME/.config/i3/config"
 ln -svf "$SPATH/config/Xresources" "$HOME/.Xresources"
 [[ ! -f "$HOME/.tmux.conf" ]] && ln -svf "$SPATH/config/.tmux.conf" "$HOME"
 ln -svf "$SPATH/config/cagelab-monitor.yaml" "$HOME/.config/tmuxp"

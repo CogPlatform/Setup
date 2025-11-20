@@ -38,8 +38,8 @@ exec --no-startup-id /usr/bin/nitrogen --set-scaled ~/.dotfiles/terminals/everfo
 exec --no-startup-id xrdb -merge ~/.Xresources
 
 # Configure space between windows and to the screen edges.
-gaps inner 5px
-gaps outer 5px
+gaps inner 1px
+gaps outer 1px
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status

@@ -85,12 +85,12 @@ if [ "$PLATFORM" = "Linux" ]; then
 	sudo apt -my install i3 rofi nitrogen xdotool
 	sudo apt -my install p7zip-full p7zip-rar figlet jq htop 
 	sudo apt -my install libunrar5 libdc1394-25 libraw1394-11
-	sudo apt -my install gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly
+	sudo apt -my install gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
 	sudo apt -my install synaptic zathura zathura-pdf-poppler zathura-ps
-	sudo apt -my install snapd python3-pip
+	sudo apt -my install snapd
 	sudo apt -my install openjdk-21-jre
 	sudo apt -my install flatpak
-	sudo apt -my install wakeonlan etherwake
+	sudo apt -my install wakeonlan etherwake xdotool
 	sudo apt -my install python3-pip python3-venv
 
 	# Install some snap packages

@@ -14,6 +14,7 @@ sudo chown -R "$USER":"$USER" /usr/local/bin # place our tools like mediamtx her
 sudo chown -R "$USER":"$USER" /usr/local/etc # mediamtx config goes here
 
 # link some cagelab stuff
+ln -sfv "$SPATH/config/toggleInput" "/usr/local/bin"
 ln -sfv "$SPATH/config/mediamtx.yml" "/usr/local/etc"
 ln -svf "$HOME/Code/CageLab/software/scripts/"* "$HOME/bin"
 ln -sfv "$HOME/Code/CageLab/software/services/"*.service "$HOME/.config/systemd/user"

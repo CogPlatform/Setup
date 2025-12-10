@@ -30,32 +30,36 @@ unalias run-help >& /dev/null
 autoload run-help # use ESC + H to bring up help, see https://man.archlinux.org/man/extra/zsh/zshcontrib.1.en
 alias help=run-help
 
-#------------------------------------MATLAB SETUP
+#------------------------------------JAVA & MATLAB SETUP
+jl=("temurin-21-jdk" "temurin-17-jdk" "java-21-openjdk" "java-17-openjdk")
+for j in $jl; do
+	if [[ -d "/usr/lib/jvm/$j-amd64" ]]; then
+		export JAVA_HOME="/usr/lib/jvm/$j-amd64"
+		export MATLAB_JAVA="/usr/lib/jvm/$j-amd64"
+		path=("$JAVA_HOME/bin" $path) 
+		break
+	fi
+done
+
 ul=("R2025b" "R2025a" "R2024b" "R2024a" "R2023b" "R2023a" "R2022b" "R2022a" "R2021b" "R2021a" "R2020b" "R2020a")
-match=0
 if [[ $PLATFORM == 'Darwin' ]]; then
 	for x in $ul; do
-		if ( [[ $match == 0 ]] && [[ -d "/Applications/MATLAB_${x}.app/bin" ]] ); then
-			match=1
+		if [[ -d "/Applications/MATLAB_${x}.app/bin" ]]; then
 			path=("/Applications/MATLAB_${x}.app/bin" $path) # matlab
 			export MATLAB_EXECUTABLE="/Applications/MATLAB_${x}.app/bin/matlab" # matlab
 			ln -sf "/Applications/MATLAB_${x}.app/bin/maci64/mlint" ~/bin/mlint # matlab
+			break
 		fi
 	done
 else
 	for x in $ul; do
-		if ( [[ $match == 0 ]] && [[ -d "/usr/local/MATLAB/${x}/bin" ]]); then
-			match=1
+		if [[ -d "/usr/local/MATLAB/${x}/bin" ]]) then
 			path=("/usr/local/MATLAB/${x}/bin" $path) # matlab
 			export MATLAB_EXECUTABLE="/usr/local/MATLAB/${x}/bin/matlab" # matlab
 			ln -sf "/usr/local/MATLAB/${x}/bin/glnxa64/mlint" ~/bin/mlint &> /dev/null # matlab
+			break
 		fi
 	done
-	[[ -d "/usr/lib/jvm/java-17-openjdk/amd64" ]] && export JAVA_HOME="/usr/lib/jvm/java-17-openjdk/amd64" # Linux Java
-	[[ -d "/usr/lib/jvm/java-17-openjdk/amd64" ]] && export MATLAB_JAVA="/usr/lib/jvm/java-17-openjdk/amd64" # Linux Java
-	[[ -d "/usr/lib/jvm/java-21-openjdk/amd64" ]] && export JAVA_HOME="/usr/lib/jvm/java-21-openjdk/amd64" # Linux Java
-	[[ -d "/usr/lib/jvm/java-21-openjdk/amd64" ]] && export MATLAB_JAVA="/usr/lib/jvm/java-21-openjdk/amd64" # Linux Java
-	[[ -d "$JAVA_HOME" ]] && export path=("${JAVA_HOME}bin" $path) # Linux JDK
 fi
 
 #------------------------------------FINALISE PATH

@@ -53,7 +53,7 @@ if [[ $PLATFORM == 'Darwin' ]]; then
 	done
 else
 	for x in $ul; do
-		if [[ -d "/usr/local/MATLAB/${x}/bin" ]]) then
+		if [[ -d "/usr/local/MATLAB/${x}/bin" ]]; then
 			path=("/usr/local/MATLAB/${x}/bin" $path) # matlab
 			export MATLAB_EXECUTABLE="/usr/local/MATLAB/${x}/bin/matlab" # matlab
 			ln -sf "/usr/local/MATLAB/${x}/bin/glnxa64/mlint" ~/bin/mlint &> /dev/null # matlab
@@ -64,10 +64,10 @@ fi
 
 #------------------------------------FINALISE PATH
 pth=("/opt/amdgpu-pro/bin" "opt/amdgpu/bin"
-	"$HOME/.cache/lm-studio/bin"
+	"${HOME}/.cache/lm-studio/bin"
 	"/usr/local/sbin" "/usr/local/bin"
-	"/snap/bin" "$HOME/.local/bin" "$HOME/bin" 
-	"$HOME/.pixi/envs/ruby/share/rubygems/bin" "$HOME/.pixi/bin")
+	"/snap/bin" "${HOME}/.local/bin" "${HOME}/bin" 
+	"${HOME}/.pixi/envs/ruby/share/rubygems/bin" "${HOME}/.pixi/bin")
 for p in $pth; do
 	if [[ -d $p ]]; then
 		path=($p $path)
@@ -79,15 +79,14 @@ export path
 [[ -x $(which fzf) ]] && source <(fzf --zsh)
 [[ -x $(which pixi) ]] && eval "$(pixi completion --shell zsh)"
 [[ -x $(which zoxide) ]] && eval "$(zoxide init zsh)"
-[[ -f "$HOME/Code/Setup/config/aliases" ]] && source "$HOME/Code/Setup/config/aliases"
+[[ -f "${HOME}/Code/Setup/config/aliases" ]] && source "${HOME}/Code/Setup/config/aliases"
 
 #------------------------------------X-CMD SETUP
 export ___X_CMD_LANG="en"
-[ ! -f "$HOME/.x-cmd.root/X" ] || . "$HOME/.x-cmd.root/X" # boot up x-cmd.
-
+[ ! -f "${HOME}/.x-cmd.root/X" ] || . "${HOME}/.x-cmd.root/X" # boot up x-cmd.
 #------------------------------------FINALISE PLUGINS
-source "$HOME/Code/Setup/config/zsh-history-substring-search.zsh"
-source "$HOME/Code/Setup/config/zsh-autosuggestions.zsh"
+source "${HOME}/Code/Setup/config/zsh-history-substring-search.zsh"
+source "${HOME}/Code/Setup/config/zsh-autosuggestions.zsh"
 
 #---------------------------------------STARSHIP
 if [[ -f $(which starship) ]]; then

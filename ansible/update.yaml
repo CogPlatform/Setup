@@ -1,0 +1,97 @@
+---
+- name: Update CageLab Software
+  hosts: "{{ target | default('cagelab_domain_servers') }}"
+  gather_facts: no
+
+  vars:
+    repositories:
+      - ~/Code/Psychtoolbox
+      - ~/Code/opticka
+      - ~/Code/CageLab
+      - ~/Code/Setup
+      - ~/Code/matmoteGO
+      - ~/Code/PTBSimia
+      - ~/Code/matlab-jzmq
+      - ~/Code/PacmanTask
+
+  tasks:
+    - name: Reset and update Setup repository
+      ansible.builtin.shell: |
+        git reset --hard
+        git clean -fd
+        git pull
+      args:
+        chdir: "~/Code/Setup"
+      register: setup_update
+      changed_when: "'Already up to date.' not in setup_update.stdout"
+
+    - name: Run makelinks script
+      ansible.builtin.command: "~/Code/Setup/makelinks.sh"
+      register: makelinks_result
+      changed_when: makelinks_result.rc == 0
+
+    - name: Stop CageLab services
+      ansible.builtin.command: "~/bin/cagelab-stop.sh"
+      register: stop_services
+      changed_when: true
+      ignore_errors: yes  # Continue even if stopping services fails (e.g. if not running)
+
+    - name: Reset and update repositories
+      ansible.builtin.shell: |
+        if [[ -d "{{ item }}" && -d "{{ item }}/.git" ]]; then
+          echo ">>> Resetting {{ item }}"
+          cd "{{ item }}"
+          git fetch --all --prune
+          upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
+          if [[ -n $upstream ]]; then
+            git reset --hard $upstream
+          else
+            git reset --hard
+          fi
+          git clean -fdx
+          git pull --force --all --prune
+        else
+          echo ">>> Skipping {{ item }} (not a git repo or does not exist)"
+        fi
+      args:
+        executable: /bin/zsh
+      loop: "{{ repositories }}"
+      register: repo_update
+      changed_when: "'Updating' in repo_update.stdout or 'bject' in repo_update.stdout"
+
+    - name: Update cogmoteGO
+      ansible.builtin.shell: "curl -sS https://raw.githubusercontent.com/cagelab/cogmoteGO/main/install.sh | sh"
+      register: update_cogmotego
+      changed_when: true
+
+    - name: Update pixi
+      ansible.builtin.shell: |
+        pixi self-update
+        pixi global sync
+        pixi global -v update
+      register: update_pixi
+      changed_when: true
+
+    - name: Install eget
+      ansible.builtin.shell: "curl https://zyedidia.github.io/eget.sh | sh && mv eget /usr/local/bin/eget"
+      args:
+        creates: /usr/local/bin/eget
+
+    - name: Update mediamtx
+      ansible.builtin.command: "eget bluenviron/mediamtx --to=/usr/local/bin"
+      register: update_mediamtx
+      changed_when: true
+      ignore_errors: yes # Might fail on permissions or if eget is missing, script didn't check
+      # Note: Original script uses explicit path /usr/local/bin but no sudo. 
+      # If this requires sudo, add 'become: yes' to this task.
+
+    - name: Update flatpak packages
+      ansible.builtin.command: "flatpak update -y"
+      register: update_flatpak
+      changed_when: "'Nothing to do.' not in update_flatpak.stdout"
+      ignore_errors: yes # Ignore errors if flatpak is not installed
+
+    - name: Start CageLab services
+      ansible.builtin.command: "~/bin/cagelab-start.sh"
+      register: start_services
+      changed_when: true

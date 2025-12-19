@@ -36,6 +36,7 @@ ln -sfv "$SPATH/config/.rsync-excludes" "$HOME/.config"
 
 # Link .zshrc
 if [[ $controller == false ]]; then
+	echo "Linking zsh configuration files..."
 	[[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.config/.zshrc"$(date -Iseconds)".bak
 	ln -svf "$SPATH/config/zshrc" "$HOME/.zshrc"
 	ln -svf "$SPATH/config/zsh-"* "$HOME/.config"
@@ -44,7 +45,8 @@ fi
 
 # ansible config
 if [[ $controller == true ]]; then
-	sudo ln -svf "$SPATH/ansible/*" "/etc/ansible/"
+	echo "Linking ansible controller files..."
+	sudo ln -svf "$SPATH/ansible/"* "/etc/ansible"
 fi
 
 # few others

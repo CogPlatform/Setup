@@ -1,7 +1,7 @@
 ---
 # For help getting started, check out https://www.redhat.com/en/topics/automation/what-is-an-ansible-playbook
 - name: Update CageLab Software
-  hosts: "{{ target | default('cagelab_domain_servers') }}"
+  hosts: "{{ target | default('cagelab_servers') }}"
   gather_facts: true
 
   vars:
@@ -23,19 +23,14 @@
         state: directory
         mode: '0755'
 
-    - name: Update apt cache
+    - name: update apt cache
       ansible.builtin.apt:
         update_cache: true
-
-    - name: Make sure curl is installed
-      ansible.builtin.apt:
-        name: curl
-        state: present
       become: true
 
-    - name: Make sure git is installed
+    - name: Make sure git/curl etc. are installed
       ansible.builtin.apt:
-        name: git
+        name: [curl, git]
         state: present
       become: true
 
@@ -50,6 +45,7 @@
       ansible.builtin.command: "~/Code/Setup/makelinks.sh"
       register: makelinks_result
       changed_when: makelinks_result.rc == 0
+      ignore_errors: true
 
     - name: Stop CageLab services
       ansible.builtin.command: "~/bin/cagelab-stop.sh"

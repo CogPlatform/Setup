@@ -1,10 +1,11 @@
 ---
+# For help getting started, check out https://www.redhat.com/en/topics/automation/what-is-an-ansible-playbook
 - name: Update CageLab Software
   hosts: "{{ target | default('cagelab_domain_servers') }}"
-  gather_facts: no
+  gather_facts: true
 
   vars:
-    repositories:
+    repositories: # List of repositories to update
       - ~/Code/Psychtoolbox
       - ~/Code/opticka
       - ~/Code/CageLab
@@ -13,13 +14,33 @@
       - ~/Code/PTBSimia
       - ~/Code/matlab-jzmq
       - ~/Code/PacmanTask
+      - ~/.dotfiles
 
   tasks:
+    - name: Ensure Code directory exists
+      ansible.builtin.file:
+        path: "~/Code"
+        state: directory
+        mode: '0755'
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Make sure curl is installed
+      ansible.builtin.apt:
+        name: curl
+        state: present
+      become: true
+
+    - name: Make sure git is installed
+      ansible.builtin.apt:
+        name: git
+        state: present
+      become: true
+
     - name: Reset and update Setup repository
-      ansible.builtin.shell: |
-        git reset --hard
-        git clean -fd
-        git pull
+      ansible.builtin.shell: "git reset --hard && git clean -fd && git pull"
       args:
         chdir: "~/Code/Setup"
       register: setup_update
@@ -34,7 +55,7 @@
       ansible.builtin.command: "~/bin/cagelab-stop.sh"
       register: stop_services
       changed_when: true
-      ignore_errors: yes  # Continue even if stopping services fails (e.g. if not running)
+      ignore_errors: true  # Continue even if stopping services fails (e.g. if not running)
 
     - name: Reset and update repositories
       ansible.builtin.shell: |
@@ -60,20 +81,17 @@
       changed_when: "'Updating' in repo_update.stdout or 'bject' in repo_update.stdout"
 
     - name: Update cogmoteGO
-      ansible.builtin.shell: "curl -sS https://raw.githubusercontent.com/cagelab/cogmoteGO/main/install.sh | sh"
+      ansible.builtin.shell: "set -o pipefail && curl -sS https://raw.githubusercontent.com/cagelab/cogmoteGO/main/install.sh | sh"
       register: update_cogmotego
       changed_when: true
 
     - name: Update pixi
-      ansible.builtin.shell: |
-        pixi self-update
-        pixi global sync
-        pixi global -v update
+      ansible.builtin.shell: "pixi self-update && pixi global sync && pixi global -v update"
       register: update_pixi
       changed_when: true
 
     - name: Install eget
-      ansible.builtin.shell: "curl https://zyedidia.github.io/eget.sh | sh && mv eget /usr/local/bin/eget"
+      ansible.builtin.shell: "set -o pipefail && curl https://zyedidia.github.io/eget.sh | sh && mv eget /usr/local/bin/eget"
       args:
         creates: /usr/local/bin/eget
 
@@ -81,15 +99,14 @@
       ansible.builtin.command: "eget bluenviron/mediamtx --to=/usr/local/bin"
       register: update_mediamtx
       changed_when: true
-      ignore_errors: yes # Might fail on permissions or if eget is missing, script didn't check
-      # Note: Original script uses explicit path /usr/local/bin but no sudo. 
-      # If this requires sudo, add 'become: yes' to this task.
+      ignore_errors: true # Might fail on permissions or if eget is missing, script didn't check
+      # Note: Original script uses explicit path /usr/local/bin but no sudo. If this requires sudo, add 'become: yes' to this task.
 
     - name: Update flatpak packages
       ansible.builtin.command: "flatpak update -y"
       register: update_flatpak
       changed_when: "'Nothing to do.' not in update_flatpak.stdout"
-      ignore_errors: yes # Ignore errors if flatpak is not installed
+      ignore_errors: true # Ignore errors if flatpak is not installed
 
     - name: Start CageLab services
       ansible.builtin.command: "~/bin/cagelab-start.sh"

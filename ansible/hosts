@@ -1,4 +1,72 @@
+---
 # Ansible Hosts Inventory
+
+cagelab_servers:
+  hosts:
+    cagelab-dev:
+      ansible_host: cagelab-dev.cloud.lab
+    cagelab-001:
+      ansible_host: cagelab-001.cloud.lab
+    cagelab-002:
+      ansible_host: cagelab-002.cloud.lab
+    cagelab-003:
+      ansible_host: cagelab-003.cloud.lab
+    cagelab-004:
+      ansible_host: cagelab-004.cloud.lab
+    cagelab-005:
+      ansible_host: cagelab-005.cloud.lab
+    pacman-001:
+      ansible_host: pacman-001.cloud.lab
+    pacman-002:
+      ansible_host: pacman-002.cloud.lab
+    pacman-003:
+      ansible_host: pacman-003.cloud.lab
+    pacman-004:
+      ansible_host: pacman-004.cloud.lab
+    pacman-005:
+      ansible_host: pacman-005.cloud.lab
+  vars:
+    ansible_user: cagelab
+    ansible_ssh_private_key_file: ~/.ssh/cagelab
+
+cagelab_prisys_servers:
+  hosts:
+    prisys-001:
+      ansible_host: prisys-001.cloud.lab
+    prisys-002:
+      ansible_host: prisys-002.cloud.lab
+    prisys-003:
+      ansible_host: prisys-003.cloud.lab
+    prisys-004:
+      ansible_host: prisys-004.cloud.lab
+    prisys-005:
+      ansible_host: prisys-005.cloud.lab
+  vars:
+    ansible_user: prisys
+    ansible_ssh_private_key_file: ~/.ssh/prisys
+
+cagelab_test:
+  hosts:
+    cagelab-dev:
+      ansible_host: cagelab-dev.cloud.lab
+  vars:
+    ansible_user: cagelab
+    ansible_ssh_private_key_file: ~/.ssh/cagelab
+
+admin_servers:
+  hosts:
+    cog5:
+      ansible_host: cog5.cloud.lab
+      ansible_user: cog5
+      ansible_ssh_private_key_file: ~/.ssh/id_rsa
+    cog21:
+      ansible_host: cog21.cloud.lab
+      ansible_user: cog
+      ansible_ssh_private_key_file: ~/.ssh/cagelab
+    prisys-alyx:
+      ansible_host: prisys-alyx.cloud.lab
+      ansible_user: prisys
+      ansible_ssh_private_key_file: ~/.ssh/prisys
 
 cagelab_ip_servers:
   hosts:
@@ -41,73 +109,6 @@ cagelab_prisys_ip_servers:
   vars:
     ansible_user: prisys
     ansible_ssh_private_key_file: ~/.ssh/prisys
-
-cagelab_domain_servers:
-  hosts:
-    cagelab-dev:
-      ansible_host: cagelab-dev.cloud.lab
-    cagelab-001:
-      ansible_host: cagelab-001.cloud.lab
-    cagelab-002:
-      ansible_host: cagelab-002.cloud.lab
-    cagelab-003:
-      ansible_host: cagelab-003.cloud.lab
-    cagelab-004:
-      ansible_host: cagelab-004.cloud.lab
-    cagelab-005:
-      ansible_host: cagelab-005.cloud.lab
-    pacman-001:
-      ansible_host: pacman-001.cloud.lab
-    pacman-002:
-      ansible_host: pacman-002.cloud.lab
-    pacman-003:
-      ansible_host: pacman-003.cloud.lab
-    pacman-004:
-      ansible_host: pacman-004.cloud.lab
-    pacman-005:
-      ansible_host: pacman-005.cloud.lab
-  vars:
-    ansible_user: cagelab
-    ansible_ssh_private_key_file: ~/.ssh/cagelab
-
-cagelab_prisys_domain_servers:
-  hosts:
-    prisys-001:
-      ansible_host: prisys-001.cloud.lab
-    prisys-002:
-      ansible_host: prisys-002.cloud.lab
-    prisys-003:
-      ansible_host: prisys-003.cloud.lab
-    prisys-004:
-      ansible_host: prisys-004.cloud.lab
-    prisys-005:
-      ansible_host: prisys-005.cloud.lab
-  vars:
-    ansible_user: prisys
-    ansible_ssh_private_key_file: ~/.ssh/prisys
-
-cagelab_domain_test:
-  hosts:
-    cagelab-dev:
-      ansible_host: cagelab-dev.cloud.lab
-  vars:
-    ansible_user: cagelab
-    ansible_ssh_private_key_file: ~/.ssh/cagelab
-
-admin_servers:
-  hosts:
-    cog5:
-      ansible_host: cog5.cloud.lab
-      ansible_user: cog5
-      ansible_ssh_private_key_file: ~/.ssh/id_rsa
-    cog21:
-      ansible_host: cog21.cloud.lab
-      ansible_user: cog
-      ansible_ssh_private_key_file: ~/.ssh/cagelab
-    prisys-alyx:
-      ansible_host: prisys-alyx.cloud.lab
-      ansible_user: prisys
-      ansible_ssh_private_key_file: ~/.ssh/prisys
 
 ip_servers:
   hosts:

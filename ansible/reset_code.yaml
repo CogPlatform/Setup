@@ -1,10 +1,10 @@
 ---
 - name: Reset CageLab Code Repositories
   hosts: "{{ target | default('cagelab_domain_servers') }}"
-  gather_facts: no
-  
+  gather_facts: false
+
   vars:
-    repositories:
+    repositories: # List of repositories to update
       - ~/Code/Psychtoolbox
       - ~/Code/opticka
       - ~/Code/CageLab
@@ -13,6 +13,7 @@
       - ~/Code/PTBSimia
       - ~/Code/matlab-jzmq
       - ~/Code/PacmanTask
+      - ~/.dotfiles
 
   tasks:
     - name: Reset and update repositories
@@ -37,6 +38,6 @@
       loop: "{{ repositories }}"
       register: repo_update
       changed_when: "'Updating' in repo_update.stdout or 'bject' in repo_update.stdout"
-      # The changed_when condition is approximate since git output varies. 
+      # The changed_when condition is approximate since git output varies.
       # We could just set it to 'true' if we assume this is always an action.
       # But usually git output contains keys when something happens.

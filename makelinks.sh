@@ -1,12 +1,16 @@
 #!/bin/bash
-# this script ensures scripts, symlinks and folders are 
+# this script ensures cagelab scripts, symlinks and folders are 
 # all correct
 
+set -o pipefail
+
 controller=false
-while getopts "c" opt; do
+server=false
+while getopts "cs" opt; do
 	case $opt in
 		c) controller=true ;;
-		*) echo "Usage: $0 [-s]" >&2; exit 1 ;;
+		s) server=true ;;
+		*) echo "Usage: $0 [-c] [-s]" >&2; exit 1 ;;
 	esac
 done
 
@@ -49,13 +53,20 @@ if [[ $controller == true ]]; then
 	sudo ln -svf "$SPATH/ansible/"* "/etc/ansible"
 fi
 
+# Link pixi-global.toml
+[[ ! -f "$HOME/.pixi/manifests/pixi-global.toml" ]] && mkdir -p "$HOME"/.pixi/manifests && ln -svf "$SPATH"/config/pixi-global.toml "$HOME"/.pixi/manifests/
+
 # few others
+sudo cp "$SPATH/config/10-libuvc.rules" "/etc/udev/rules.d/"
 ln -svf "$SPATH/config/i3config" "$HOME/.config/i3/config"
 ln -svf "$SPATH/config/Xresources" "$HOME/.Xresources"
-[[ ! -f "$HOME/.tmux.conf" ]] && ln -svf "$SPATH/config/.tmux.conf" "$HOME"
 ln -svf "$SPATH/config/cagelab-monitor.yaml" "$HOME/.config/tmuxp"
-[[ ! -f "$HOME/.config/starship.toml" ]] && ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
-sudo cp "$SPATH/config/10-libuvc.rules" "/etc/udev/rules.d/"
+if [[ ! -f "$HOME/.tmux.conf" ]]; then
+	ln -svf "$SPATH/config/tmux.conf" "$HOME/.tmux.conf"
+fi
+if [[ ! -f "$HOME/.config/starship.toml" ]]; then
+	ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
+fi
 
-# Link pixi-global.toml
-[[ ! -f "$HOME/.pixi/manifests/pixi-global.toml" ]] && mkdir -p $HOME/.pixi/manifests && ln -svf $SPATH/config/pixi-global.toml $HOME/.pixi/manifests/
+# Final message and exit
+echo "All done!" && return 0

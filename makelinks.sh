@@ -22,6 +22,7 @@ mkdir -p "$HOME/bin"
 mkdir -p "$HOME/.local/bin"
 mkdir -p "$HOME/.config/systemd/user"
 mkdir -p "$HOME/.config/tmuxp"
+mkdir -p "$HOME/.config/i3"
 mkdir -p "$HOME/.ssh"
 [[ $controller == true ]] && sudo mkdir -p /etc/ansible
 sudo chown -R "$USER":"$USER" /usr/local/bin # place our tools like mediamtx here
@@ -41,7 +42,7 @@ ln -sfv "$SPATH/config/.rsync-excludes" "$HOME/.config"
 # Link .zshrc
 if [[ $controller == false ]]; then
 	echo "Linking zsh configuration files..."
-	[[ -e ~/.zshrc ]] && cp ~/.zshrc ~/.config/.zshrc"$(date -Iseconds)".bak
+	[[ -e "$HOME/.zshrc" ]] && cp "$HOME/.zshrc" "$HOME/.config/.zshrc$(date -Iseconds).bak"
 	ln -svf "$SPATH/config/zshrc" "$HOME/.zshrc"
 	ln -svf "$SPATH/config/zsh-"* "$HOME/.config"
 	ln -svf "$SPATH/config/aliases" "$HOME/.config"
@@ -69,4 +70,4 @@ if [[ ! -f "$HOME/.config/starship.toml" ]]; then
 fi
 
 # Final message and exit
-echo "All done!" && return 0
+echo "All done!" && exit 0

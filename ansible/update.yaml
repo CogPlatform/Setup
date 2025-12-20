@@ -1,5 +1,5 @@
 ---
-# For help getting started, check out https://www.redhat.com/en/topics/automation/what-is-an-ansible-playbook
+# For help, check out https://www.redhat.com/en/topics/automation/what-is-an-ansible-playbook
 - name: Update CageLab Software
   hosts: "{{ target | default('cagelab_servers') }}"
   gather_facts: true
@@ -23,7 +23,7 @@
         state: directory
         mode: '0755'
 
-    - name: update apt cache
+    - name: Update apt cache
       ansible.builtin.apt:
         update_cache: true
       become: true
@@ -39,16 +39,27 @@
       args:
         chdir: "~/Code/Setup"
       register: setup_update
-      changed_when: "'Already up to date.' not in setup_update.stdout"
 
     - name: Run makelinks script
-      ansible.builtin.command: "~/Code/Setup/makelinks.sh"
+      ansible.builtin.command: "{{ ansible_user_dir }}/Code/Setup/makelinks.sh"
+      become: true
+      environment:
+        HOME: "{{ ansible_user_dir }}"
+        USER: "{{ ansible_user_id }}"
       register: makelinks_result
       changed_when: makelinks_result.rc == 0
       ignore_errors: true
 
+    - name: Ensure home directory ownership is correct
+      ansible.builtin.file:
+        path: "{{ ansible_user_dir }}"
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        recurse: false # Avoid heavy recursion, just fix the top level and links if needed
+      become: true
+
     - name: Stop CageLab services
-      ansible.builtin.command: "~/bin/cagelab-stop.sh"
+      ansible.builtin.command: "{{ ansible_user_dir }}/bin/cagelab-stop.sh"
       register: stop_services
       changed_when: true
       ignore_errors: true  # Continue even if stopping services fails (e.g. if not running)
@@ -105,6 +116,6 @@
       ignore_errors: true # Ignore errors if flatpak is not installed
 
     - name: Start CageLab services
-      ansible.builtin.command: "~/bin/cagelab-start.sh"
+      ansible.builtin.command: "{{ ansible_user_dir }}/bin/cagelab-start.sh"
       register: start_services
       changed_when: true

@@ -5,23 +5,41 @@
   gather_facts: true
 
   vars:
-    repositories: # List of repositories to update
-      - ~/Code/Psychtoolbox
-      - ~/Code/opticka
-      - ~/Code/CageLab
-      - ~/Code/Setup
-      - ~/Code/matmoteGO
-      - ~/Code/PTBSimia
-      - ~/Code/matlab-jzmq
-      - ~/Code/PacmanTask
-      - ~/.dotfiles
+    repositories: # List of repositories to force update (path and url)
+      - { path: "~/Code/Setup", url: "https://gitee.com/CogPlatform/Setup.git" }
+      - { path: "~/Code/CageLab", url: "https://gitee.com/CogPlatform/CageLab.git" }
+      - { path: "~/Code/Psychtoolbox", url: "https://gitee.com/CogPlatform/Psychtoolbox.git" }
+      - { path: "~/Code/opticka", url: "https://gitee.com/CogPlatform/opticka.git" }
+      - { path: "~/Code/matmoteGO", url: "https://gitee.com/CogPlatform/matmoteGO.git" }
+      - { path: "~/Code/PTBSimia", url: "https://gitee.com/CogPlatform/PTBSimia.git" }
+      - { path: "~/Code/matlab-jzmq", url: "https://gitee.com/CogPlatform/matlab-jzmq.git" }
+      - { path: "~/Code/PacmanTask", url: "https://gitee.com/CogPlatform/PacmanTask.git" }
+      - { path: "~/.dotfiles", url: "https://codeberg.org/iandol/dotfiles.git" }
 
   tasks:
+
     - name: Ensure Code directory exists
       ansible.builtin.file:
         path: "~/Code"
         state: directory
         mode: '0755'
+
+    - name: Ensure home directory ownership is correct
+      ansible.builtin.file:
+        path: "{{ ansible_facts['user_dir'] }}"
+        owner: "{{ ansible_facts['user_id'] }}"
+        group: "{{ ansible_facts['user_id'] }}"
+        recurse: false # Avoid heavy recursion, just fix the top level and links if needed
+      become: true
+
+    - name: Ensure /usr/local/bin is writable by the user
+      ansible.builtin.file:
+        path: /usr/local/bin
+        state: directory
+        owner: "{{ ansible_facts['user_id'] }}"
+        group: "{{ ansible_facts['user_id'] }}"
+        mode: '0755'
+      become: true
 
     - name: Update apt cache
       ansible.builtin.apt:
@@ -30,92 +48,95 @@
 
     - name: Make sure git/curl etc. are installed
       ansible.builtin.apt:
-        name: [curl, git]
+        name: [curl, git, tmux, tmuxp, flatpak]
         state: present
       become: true
 
-    - name: Reset and update Setup repository
-      ansible.builtin.shell: "git reset --hard && git clean -fd && git pull"
-      args:
-        chdir: "~/Code/Setup"
-      register: setup_update
+    # ensure all our code repos are force pulled to latest
+    - name: Reset and update repositories
+      ansible.builtin.git:
+        repo: "{{ item.url }}"
+        dest: "{{ item.path }}"
+        force: yes
+        accept_hostkey: yes
+      environment:
+        GIT_TERMINAL_PROMPT: "0"
+      loop: "{{ repositories }}"
 
+    # run the makelinks script to ensure all symlinks are in place
     - name: Run makelinks script
-      ansible.builtin.command: "{{ ansible_user_dir }}/Code/Setup/makelinks.sh"
+      ansible.builtin.command: "{{ ansible_facts['user_dir'] }}/Code/Setup/makelinks.sh"
       become: true
       environment:
-        HOME: "{{ ansible_user_dir }}"
-        USER: "{{ ansible_user_id }}"
+        HOME: "{{ ansible_facts['user_dir'] }}"
+        USER: "{{ ansible_facts['user_id'] }}"
       register: makelinks_result
-      changed_when: makelinks_result.rc == 0
       ignore_errors: true
 
-    - name: Ensure home directory ownership is correct
-      ansible.builtin.file:
-        path: "{{ ansible_user_dir }}"
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
-        recurse: false # Avoid heavy recursion, just fix the top level and links if needed
-      become: true
-
     - name: Stop CageLab services
-      ansible.builtin.command: "{{ ansible_user_dir }}/bin/cagelab-stop.sh"
+      ansible.builtin.command: "{{ ansible_facts['user_dir']  }}/bin/cagelab-stop.sh"
       register: stop_services
       changed_when: true
       ignore_errors: true  # Continue even if stopping services fails (e.g. if not running)
 
-    - name: Reset and update repositories
-      ansible.builtin.shell: |
-        if [[ -d "{{ item }}" && -d "{{ item }}/.git" ]]; then
-          echo ">>> Resetting {{ item }}"
-          cd "{{ item }}"
-          git fetch --all --prune
-          upstream=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
-          if [[ -n $upstream ]]; then
-            git reset --hard $upstream
-          else
-            git reset --hard
-          fi
-          git clean -fdx
-          git pull --force --all --prune
-        else
-          echo ">>> Skipping {{ item }} (not a git repo or does not exist)"
-        fi
-      args:
-        executable: /bin/zsh
-      loop: "{{ repositories }}"
-      register: repo_update
-      changed_when: "'Updating' in repo_update.stdout or 'bject' in repo_update.stdout"
-
-    - name: Update cogmoteGO
-      ansible.builtin.shell: "set -o pipefail && curl -sS https://raw.githubusercontent.com/cagelab/cogmoteGO/main/install.sh | sh"
+    - name: Update/install cogmoteGO
+      ansible.builtin.shell: "curl -sS https://raw.githubusercontent.com/cagelab/cogmoteGO/main/install.sh | sh"
       register: update_cogmotego
       changed_when: true
 
+    - name: Check if pixi is installed
+      ansible.builtin.stat:
+        path: "{{ ansible_facts['user_dir'] }}/.pixi/bin/pixi"
+      register: pixi_binary
+
+    - name: Ensure pixi is installed
+      ansible.builtin.shell: "curl -fsSL https://pixi.sh/install.sh | bash"
+      when: not pixi_binary.stat.exists
+
     - name: Update pixi
       ansible.builtin.shell: "pixi self-update && pixi global sync && pixi global -v update"
+      environment:
+        PATH: "{{ ansible_facts['user_dir'] }}/.pixi/bin:{{ ansible_facts['user_dir'] }}/.local/bin:{{ ansible_facts['user_dir'] }}/bin:{{ ansible_env.PATH }}"
       register: update_pixi
       changed_when: true
+      ignore_errors: true
 
-    - name: Install eget
-      ansible.builtin.shell: "set -o pipefail && curl https://zyedidia.github.io/eget.sh | sh && mv eget /usr/local/bin/eget"
-      args:
-        creates: /usr/local/bin/eget
+    - name: Check if eget is installed
+      ansible.builtin.stat:
+        path: /usr/local/bin/eget
+      register: eget_binary
 
-    - name: Update mediamtx
-      ansible.builtin.command: "eget bluenviron/mediamtx --to=/usr/local/bin"
+    - name: Update/install eget
+      ansible.builtin.shell: "curl https://zyedidia.github.io/eget.sh | sh && mv eget /usr/local/bin/eget"
+      when: not eget_binary.stat.exists
+      ignore_errors: true
+
+    - name: Update/install mediamtx
+      ansible.builtin.command: "eget bluenviron/mediamtx --upgrade-only --to=/usr/local/bin"
       register: update_mediamtx
       changed_when: true
-      ignore_errors: true # Might fail on permissions or if eget is missing, script didn't check
-      # Note: Original script uses explicit path /usr/local/bin but no sudo. If this requires sudo, add 'become: yes' to this task.
+      ignore_errors: true 
+
+    - name: Add flathub repository
+      ansible.builtin.command: "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+      become: true
+      ignore_errors: true
+
+    - name: Ensure OBS Studio is installed
+      ansible.builtin.command: "flatpak install -y flathub com.obsproject.Studio"
+      become: true
+      register: install_obs
+      changed_when: "'Installing' in install_obs.stdout"
+      ignore_errors: true
 
     - name: Update flatpak packages
       ansible.builtin.command: "flatpak update -y"
+      become: true
       register: update_flatpak
       changed_when: "'Nothing to do.' not in update_flatpak.stdout"
       ignore_errors: true # Ignore errors if flatpak is not installed
 
     - name: Start CageLab services
-      ansible.builtin.command: "{{ ansible_user_dir }}/bin/cagelab-start.sh"
+      ansible.builtin.command: "{{ ansible_facts['user_dir'] }}/bin/cagelab-start.sh"
       register: start_services
       changed_when: true

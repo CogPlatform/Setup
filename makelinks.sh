@@ -2,7 +2,9 @@
 # this script ensures cagelab scripts, symlinks and folders are 
 # all correct
 
-set -o pipefail
+# Ensure the script continues on errors and handles empty globs
+set +e
+shopt -s nullglob
 
 controller=false
 server=false
@@ -20,13 +22,15 @@ export SPATH="$HOME/Code/Setup"
 mkdir -p "$HOME/Code"
 mkdir -p "$HOME/bin"
 mkdir -p "$HOME/.local/bin"
+mkdir -p "$HOME/.config"
 mkdir -p "$HOME/.config/systemd/user"
 mkdir -p "$HOME/.config/tmuxp"
 mkdir -p "$HOME/.config/i3"
 mkdir -p "$HOME/.ssh"
-[[ $controller == true ]] && sudo mkdir -p /etc/ansible
-sudo chown -R "$USER":"$USER" /usr/local/bin # place our tools like mediamtx here
-sudo chown -R "$USER":"$USER" /usr/local/etc # mediamtx config goes here
+[[ $controller == true ]] && mkdir -p "$HOME/.ansible" && sudo mkdir -p /etc/ansible
+sudo mkdir -p /usr/local/bin /usr/local/etc
+sudo chown -R "$USER":"$USER" /usr/local/bin || true
+sudo chown -R "$USER":"$USER" /usr/local/etc || true
 
 # link some cagelab stuff
 ln -sfv "$SPATH/config/toggleInput" "/usr/local/bin"
@@ -39,23 +43,26 @@ ln -sfv "$HOME/Code/CageLab/software/services/"*.service "$HOME/.config/systemd/
 [[ ! -f "$HOME/.ssh/config" ]] && ln -svf "$HOME/Code/Setup/config/sshconfig" "$HOME/.ssh/config"
 ln -sfv "$SPATH/config/.rsync-excludes" "$HOME/.config"
 
-# Link .zshrc
+# Link .zshrc only for non-controllers
 if [[ $controller == false ]]; then
 	echo "Linking zsh configuration files..."
-	[[ -e "$HOME/.zshrc" ]] && cp "$HOME/.zshrc" "$HOME/.config/.zshrc$(date -Iseconds).bak"
+	[[ -f "$HOME/.zshrc" ]] && cp "$HOME/.zshrc" "$HOME/.config/.zshrc$(date -Iseconds).bak"
 	ln -svf "$SPATH/config/zshrc" "$HOME/.zshrc"
 	ln -svf "$SPATH/config/zsh-"* "$HOME/.config"
 	ln -svf "$SPATH/config/aliases" "$HOME/.config"
 fi
 
-# ansible config
+# ansible config only for controllers
 if [[ $controller == true ]]; then
 	echo "Linking ansible controller files..."
 	sudo ln -svf "$SPATH/ansible/"* "/etc/ansible"
 fi
 
 # Link pixi-global.toml
-[[ ! -f "$HOME/.pixi/manifests/pixi-global.toml" ]] && mkdir -p "$HOME"/.pixi/manifests && ln -svf "$SPATH"/config/pixi-global.toml "$HOME"/.pixi/manifests/
+if [[ ! -f "$HOME/.pixi/manifests/pixi-global.toml" ]]; then
+	mkdir -p "$HOME/.pixi/manifests"
+	ln -svf "$SPATH/config/pixi-global.toml" "$HOME/.pixi/manifests/"
+fi
 
 # few others
 sudo cp "$SPATH/config/10-libuvc.rules" "/etc/udev/rules.d/"
@@ -68,6 +75,9 @@ fi
 if [[ ! -f "$HOME/.config/starship.toml" ]]; then
 	ln -svf "$SPATH/config/starship.toml" "$HOME/.config/starship.toml"
 fi
+
+# Ensure user ownership for everything created in home
+chown -R "$USER":"$USER" "$HOME/bin" "$HOME/.local" "$HOME/.config" "$HOME/.ssh" "$HOME/.pixi" 2>/dev/null
 
 # Final message and exit
 echo "All done!" && exit 0

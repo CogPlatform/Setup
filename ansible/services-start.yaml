@@ -1,0 +1,14 @@
+---
+- name: Start Cagelab Services
+  hosts: "{{ target | default('cagelab_servers') }}"
+  gather_facts: false
+  tasks:
+    - name: Start services
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+      loop:
+        - cogmoteGO.service
+        - theConductor.service
+        - mediamtx.service
+        - obs.service

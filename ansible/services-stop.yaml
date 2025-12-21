@@ -1,0 +1,15 @@
+---
+- name: Stop Cagelab Services
+  hosts: "{{ target | default('cagelab_servers') }}"
+  gather_facts: false
+  tasks:
+    - name: Stop services
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: stopped
+      loop:
+        - theConductor.service
+        - cogmoteGO.service
+        - obs-fix.service
+        - obs.service
+        - mediamtx.service

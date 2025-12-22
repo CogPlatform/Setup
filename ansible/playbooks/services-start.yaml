@@ -4,11 +4,12 @@
   gather_facts: false
   tasks:
     - name: Start services
-      ansible.builtin.service:
+      ansible.builtin.systemd:
         name: "{{ item }}"
         state: started
+        scope: user
       loop:
-        - cogmoteGO.service
-        - theConductor.service
-        - mediamtx.service
-        - obs.service
+        - cogmoteGO
+        - theConductor
+        - mediamtx
+        - obs

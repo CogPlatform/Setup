@@ -27,7 +27,7 @@ mkdir -p "$HOME/.config/systemd/user"
 mkdir -p "$HOME/.config/tmuxp"
 mkdir -p "$HOME/.config/i3"
 mkdir -p "$HOME/.ssh"
-[[ $controller == true ]] && mkdir -p "$HOME/.ansible" && sudo mkdir -p /etc/ansible
+[[ $controller == true ]] && mkdir -p "$HOME/.ansible" && sudo mkdir -p /etc/ansible && sudo chown -R "$USER":"$USER" /etc/ansible || true
 sudo mkdir -p /usr/local/bin /usr/local/etc
 sudo chown -R "$USER":"$USER" /usr/local/bin || true
 sudo chown -R "$USER":"$USER" /usr/local/etc || true
@@ -55,7 +55,9 @@ fi
 # ansible config only for controllers
 if [[ $controller == true ]]; then
 	echo "Linking ansible controller files..."
-	sudo ln -svf "$SPATH/ansible/"* "/etc/ansible"
+	sudo ln -svf "$SPATH/ansible/inventory/hosts" "/etc/ansible/hosts"
+	sudo ln -svf "$SPATH/ansible/playbooks" "/etc/ansible/playbooks"
+	sudo ln -svf "$SPATH/ansible/roles" "/etc/ansible/roles" 
 fi
 
 # Link pixi-global.toml

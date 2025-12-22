@@ -4,9 +4,10 @@
   gather_facts: false
   tasks:
     - name: Stop services
-      ansible.builtin.service:
+      ansible.builtin.systemd:
         name: "{{ item }}"
         state: stopped
+        scope: user
       loop:
         - theConductor.service
         - cogmoteGO.service

@@ -1,0 +1,41 @@
+---
+- name: Install i3 Window Manager
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Download sur5r keyring deb
+      ansible.builtin.get_url:
+        url: https://debian.sur5r.net/i3/pool/main/s/sur5r-keyring/sur5r-keyring_2025.03.09_all.deb
+        dest: /tmp/sur5r-keyring.deb
+        checksum: sha256:2c2601e6053d5c68c2c60bcd088fa9797acec5f285151d46de9c830aaba6173c
+        mode: '0644'
+
+    - name: Install sur5r keyring
+      ansible.builtin.apt:
+        deb: /tmp/sur5r-keyring.deb
+
+    - name: Add sur5r i3 repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/sur5r-keyring.gpg] http://debian.sur5r.net/i3/ {{ ansible_facts['distribution_release'] }} universe"
+        filename: sur5r-i3
+        state: present
+        update_cache: true
+
+    - name: Install i3
+      ansible.builtin.apt:
+        name: i3
+        state: present
+
+    - name: Upgrade all packages
+      ansible.builtin.apt:
+        upgrade: true
+        update_cache: true
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+
+    - name: Cleanup temporary keyring file
+      ansible.builtin.file:
+        path: /tmp/sur5r-keyring.deb
+        state: absent

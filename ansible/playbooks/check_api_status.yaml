@@ -1,0 +1,26 @@
+---
+- name: Check Local API cogmoteGO Status
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Query cogmoteGO API status endpoint
+      ansible.builtin.uri:
+        url: http://localhost:9012/api/status
+        method: GET
+        return_content: true
+      register: status_response
+
+    - name: Set is_running fact
+      ansible.builtin.set_fact:
+        is_running: "{{ status_response.json.is_running }}"
+      when: status_response is defined
+
+    - name: End play if cagelab is running an experiment
+      ansible.builtin.meta: end_host
+      when: status_response is defined and is_running | bool
+
+    # Example of using the value in a subsequent task
+    - name: Print status
+      ansible.builtin.debug:
+        msg: "Service running status is: {{ is_running }}"

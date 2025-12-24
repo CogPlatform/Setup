@@ -55,9 +55,10 @@ fi
 # ansible config only for controllers
 if [[ $controller == true ]]; then
 	echo "Linking ansible controller files..."
+	sudo ln -svf "$SPATH/ansible/ansible.cfg" "/etc/ansible/ansible.cfg"
 	sudo ln -svf "$SPATH/ansible/inventory/hosts" "/etc/ansible/hosts"
-	sudo ln -svf "$SPATH/ansible/playbooks" "/etc/ansible/playbooks"
-	sudo ln -svf "$SPATH/ansible/roles" "/etc/ansible/roles" 
+	sudo ln -svf "$SPATH/ansible/playbooks" "$HOME/.ansible/playbooks"
+	sudo ln -svf "$SPATH/ansible/roles" "$HOME/.ansible/roles" 
 fi
 
 # Link pixi-global.toml

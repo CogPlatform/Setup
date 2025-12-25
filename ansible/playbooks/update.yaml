@@ -60,12 +60,14 @@
       ansible.builtin.apt:
         update_cache: true
       become: true
+      ignore_errors: true
 
     - name: Make sure git/curl etc. are installed
       ansible.builtin.apt:
         name: [curl, git, tmux, tmuxp, flatpak]
         state: present
       become: true
+      ignore_errors: true
 
     # ensure all our code repos are force pulled to latest
     - name: Reset and update repositories

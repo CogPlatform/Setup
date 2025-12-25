@@ -10,15 +10,15 @@
         method: GET
         return_content: true
       register: status_response
+      failed_when: false
 
     - name: Set is_running fact
       ansible.builtin.set_fact:
-        is_running: "{{ status_response.json.is_running }}"
-      when: status_response is defined
+        is_running: "{{ status_response.json.is_running if (status_response.json is defined) else false }}"
 
     - name: End play if cagelab is running an experiment
       ansible.builtin.meta: end_host
-      when: status_response is defined and is_running | bool
+      when: is_running | bool
 
     # Example of using the value in a subsequent task
     - name: Print status

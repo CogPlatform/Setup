@@ -14,7 +14,6 @@
       - { path: "~/Code/PTBSimia", url: "https://gitee.com/CogPlatform/PTBSimia.git" }
       - { path: "~/Code/matlab-jzmq", url: "https://gitee.com/CogPlatform/matlab-jzmq.git" }
       - { path: "~/Code/PacmanTask", url: "https://gitee.com/CogPlatform/PacmanTask.git" }
-      - { path: "~/.dotfiles", url: "https://codeberg.org/iandol/dotfiles.git" }
 
   tasks:
 
@@ -24,16 +23,15 @@
         method: GET
         return_content: true
       register: status_response
-      ignore_errors: true
+      failed_when: false
 
     - name: Set is_running fact
       ansible.builtin.set_fact:
-        is_running: "{{ status_response.json.is_running }}"
-      when: status_response is defined
+        is_running: "{{ status_response.json.is_running if (status_response.json is defined) else false }}"
 
     - name: End play if cagelab is running an experiment
       ansible.builtin.meta: end_host
-      when: status_response is defined and is_running | bool
+      when: is_running | bool
 
     - name: Ensure Code directory exists
       ansible.builtin.file:

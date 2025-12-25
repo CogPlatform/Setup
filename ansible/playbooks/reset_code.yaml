@@ -1,6 +1,6 @@
 ---
 - name: Reset CageLab Code Repositories
-  hosts: "{{ target | default('cagelab_domain_servers') }}"
+  hosts: "{{ target | default('all') }}"
   gather_facts: false
 
   vars:

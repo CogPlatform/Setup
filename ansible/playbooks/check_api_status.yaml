@@ -2,6 +2,7 @@
 - name: Check Local API cogmoteGO Status
   hosts: all
   gather_facts: false
+  ignore_unreachable: true
 
   tasks:
     - name: Query cogmoteGO API status endpoint

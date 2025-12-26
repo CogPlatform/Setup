@@ -3,6 +3,7 @@
 - name: Update CageLab Software
   hosts: "{{ target | default('cagelab_servers') }}"
   gather_facts: true
+  ignore_unreachable: true
 
   vars:
     repositories: # List of repositories to force update (path and url)

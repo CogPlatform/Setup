@@ -6,6 +6,8 @@
   ignore_unreachable: true
 
   vars:
+    cogmotego_install_script_url: "https://raw.githubusercontent.com/cagelab/cogmoteGO/main/install.sh"
+    pixi_install_script_url: "https://pixi.sh/install.sh"
     repositories: # List of repositories to force update (path and url)
       - { path: "~/Code/Setup", url: "https://gitee.com/CogPlatform/Setup.git" }
       - { path: "~/Code/CageLab", url: "https://gitee.com/CogPlatform/CageLab.git" }
@@ -99,19 +101,79 @@
       changed_when: true
       ignore_errors: true  # Continue even if stopping services fails (e.g. if not running)
 
-    - name: Update/install cogmoteGO
-      ansible.builtin.shell: "curl -sS https://raw.githubusercontent.com/cagelab/cogmoteGO/main/install.sh | sh"
+    - name: Download cogmoteGO installer script (best-effort; retries)
+      ansible.builtin.get_url:
+        url: "{{ cogmotego_install_script_url }}"
+        dest: /tmp/cogmotego-install.sh
+        mode: '0755'
+        force: true
+        timeout: 5
+      register: cogmotego_install_script
+      retries: 1
+      delay: 1
+      until: cogmotego_install_script is succeeded
+      ignore_errors: true
+
+    - name: Update/install cogmoteGO (best-effort)
+      ansible.builtin.shell: "sh /tmp/cogmotego-install.sh"
       register: update_cogmotego
-      changed_when: true
+      changed_when: update_cogmotego.rc == 0
+      failed_when: false
+      when: cogmotego_install_script is succeeded
+
+    - name: Warn if cogmoteGO installer could not be downloaded
+      ansible.builtin.debug:
+        msg: >-
+          Skipping cogmoteGO update: failed to download installer from {{ cogmotego_install_script_url }}
+          (error={{ cogmotego_install_script.msg | default('unknown') }}).
+      when: cogmotego_install_script is failed
 
     - name: Check if pixi is installed
       ansible.builtin.stat:
         path: "{{ ansible_facts['user_dir'] }}/.pixi/bin/pixi"
       register: pixi_binary
 
-    - name: Ensure pixi is installed
-      ansible.builtin.shell: "curl -fsSL https://pixi.sh/install.sh | bash"
+    - name: Download pixi installer script (best-effort; retries)
+      ansible.builtin.get_url:
+        url: "{{ pixi_install_script_url }}"
+        dest: /tmp/pixi-install.sh
+        mode: '0755'
+        force: true
+        timeout: 5
+      register: pixi_install_script
+      retries: 1
+      delay: 1
+      until: pixi_install_script is succeeded
       when: not pixi_binary.stat.exists
+      ignore_errors: true
+
+    - name: Ensure pixi is installed (best-effort)
+      ansible.builtin.shell: "bash /tmp/pixi-install.sh"
+      register: pixi_install
+      changed_when: pixi_install.rc == 0
+      failed_when: false
+      when:
+        - not pixi_binary.stat.exists
+        - pixi_install_script is succeeded
+
+    - name: Warn if pixi installer could not be downloaded
+      ansible.builtin.debug:
+        msg: >-
+          Skipping pixi install: failed to download installer from {{ pixi_install_script_url }}
+          (error={{ pixi_install_script.msg | default('unknown') }}).
+      when:
+        - not pixi_binary.stat.exists
+        - pixi_install_script is failed
+
+    - name: Re-check if pixi is installed
+      ansible.builtin.stat:
+        path: "{{ ansible_facts['user_dir'] }}/.pixi/bin/pixi"
+      register: pixi_binary_after
+      when: not pixi_binary.stat.exists
+
+    - name: Set pixi_installed fact
+      ansible.builtin.set_fact:
+        pixi_installed: "{{ pixi_binary.stat.exists or (pixi_binary_after.stat.exists | default(false)) }}"
 
     - name: Update pixi
       ansible.builtin.shell: "pixi self-update && pixi global sync && pixi global -v update"
@@ -124,6 +186,7 @@
       register: update_pixi
       changed_when: true
       ignore_errors: true
+      when: pixi_installed | default(pixi_binary.stat.exists) | bool
 
     - name: Check if eget is installed
       ansible.builtin.stat:

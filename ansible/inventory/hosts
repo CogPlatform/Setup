@@ -1,7 +1,7 @@
 ---
 # Ansible Hosts Inventory
 
-cagelab_servers:
+cagelab:
   hosts:
     cagelab-dev:
       ansible_host: cagelab-dev.cloud.lab
@@ -15,6 +15,32 @@ cagelab_servers:
       ansible_host: cagelab-004.cloud.lab
     cagelab-005:
       ansible_host: cagelab-005.cloud.lab
+    cagelab-006:
+      ansible_host: cagelab-006.cloud.lab
+  vars:
+    ansible_user: cagelab
+    ansible_ssh_private_key_file: ~/.ssh/cagelab
+
+cagelab_ip:
+  hosts:
+    cagelab-001i:
+      ansible_host: 192.168.3.11
+    cagelab-002i:
+      ansible_host: 192.168.3.12
+    cagelab-003i:
+      ansible_host: 192.168.3.13
+    cagelab-004i:
+      ansible_host: 192.168.3.14
+    cagelab-005i:
+      ansible_host: 192.168.3.15
+    cagelab-006i:
+      ansible_host: 192.168.3.16
+  vars:
+    ansible_user: cagelab
+    ansible_ssh_private_key_file: ~/.ssh/cagelab
+
+cagelab_pacman:
+  hosts:
     pacman-001:
       ansible_host: pacman-001.cloud.lab
     pacman-002:
@@ -29,7 +55,23 @@ cagelab_servers:
     ansible_user: cagelab
     ansible_ssh_private_key_file: ~/.ssh/cagelab
 
-cagelab_prisys_servers:
+cagelab_pacman_ip:
+  hosts:
+    pacman-001i:
+      ansible_host: 192.168.3.21
+    pacman-002i:
+      ansible_host: 192.168.3.22
+    pacman-003i:
+      ansible_host: 192.168.3.23
+    pacman-004i:
+      ansible_host: 192.168.3.24
+    pacman-005i:
+      ansible_host: 192.168.3.25
+  vars:
+    ansible_user: cagelab
+    ansible_ssh_private_key_file: ~/.ssh/cagelab
+
+cagelab_prisys:
   hosts:
     prisys-001:
       ansible_host: prisys-001.cloud.lab
@@ -41,6 +83,22 @@ cagelab_prisys_servers:
       ansible_host: prisys-004.cloud.lab
     prisys-005:
       ansible_host: prisys-005.cloud.lab
+  vars:
+    ansible_user: prisys
+    ansible_ssh_private_key_file: ~/.ssh/prisys
+
+cagelab_prisys_ip:
+  hosts:
+    prisys-001i:
+      ansible_host: 192.100.2.226
+    prisys-002i:
+      ansible_host: 192.100.2.3
+    prisys-003i:
+      ansible_host: 192.100.2.214
+    prisys-004i:
+      ansible_host: 192.100.2.125
+    prisys-005i:
+      ansible_host: 192.100.2.215
   vars:
     ansible_user: prisys
     ansible_ssh_private_key_file: ~/.ssh/prisys
@@ -67,48 +125,6 @@ admin_servers:
       ansible_host: prisys-alyx.cloud.lab
       ansible_user: prisys
       ansible_ssh_private_key_file: ~/.ssh/prisys
-
-cagelab_ip_servers:
-  hosts:
-    cagelab-001i:
-      ansible_host: 192.168.3.11
-    cagelab-002i:
-      ansible_host: 192.168.3.12
-    cagelab-003i:
-      ansible_host: 192.168.3.13
-    cagelab-004i:
-      ansible_host: 192.168.3.14
-    cagelab-005i:
-      ansible_host: 192.168.3.15
-    pacman-001i:
-      ansible_host: 192.168.3.21
-    pacman-002i:
-      ansible_host: 192.168.3.22
-    pacman-003i:
-      ansible_host: 192.168.3.23
-    pacman-004i:
-      ansible_host: 192.168.3.24
-    pacman-005i:
-      ansible_host: 192.168.3.25
-  vars:
-    ansible_user: cagelab
-    ansible_ssh_private_key_file: ~/.ssh/cagelab
-
-cagelab_prisys_ip_servers:
-  hosts:
-    prisys-001i:
-      ansible_host: 192.100.2.226
-    prisys-002i:
-      ansible_host: 192.100.2.3
-    prisys-003i:
-      ansible_host: 192.100.2.214
-    prisys-004i:
-      ansible_host: 192.100.2.125
-    prisys-005i:
-      ansible_host: 192.100.2.215
-  vars:
-    ansible_user: prisys
-    ansible_ssh_private_key_file: ~/.ssh/prisys
 
 ip_servers:
   hosts:

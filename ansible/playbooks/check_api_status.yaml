@@ -2,14 +2,37 @@
 - name: Check Local API cogmoteGO Status
   hosts: all
   gather_facts: false
-  ignore_unreachable: true
 
   tasks:
+    - name: Check SSH connectivity (skip host if unreachable)
+      ansible.builtin.wait_for_connection:
+        timeout: 2
+      register: conn_check
+      ignore_errors: true
+      changed_when: false
+      retries: 0
+      until: false
+
+    - name: Set can_connect fact
+      ansible.builtin.set_fact:
+        can_connect: "{{ conn_check is not failed }}"
+
+    - name: Record unreachable hosts
+      ansible.builtin.add_host:
+        name: "{{ inventory_hostname }}"
+        groups: unreachable_hosts
+      when: not can_connect | bool
+
+    - name: Stop processing unreachable hosts
+      ansible.builtin.meta: end_host
+      when: not can_connect | bool
+
     - name: Query cogmoteGO API status endpoint
       ansible.builtin.uri:
         url: http://localhost:9012/api/status
         method: GET
         return_content: true
+        timeout: 5
       register: status_response
       failed_when: false
 
@@ -17,11 +40,36 @@
       ansible.builtin.set_fact:
         is_running: "{{ status_response.json.is_running if (status_response.json is defined) else false }}"
 
-    - name: End play if cagelab is running an experiment
-      ansible.builtin.meta: end_host
-      when: is_running | bool
-
-    # Example of using the value in a subsequent task
     - name: Print status
       ansible.builtin.debug:
         msg: "Service running status is: {{ is_running }}"
+
+    - name: Query cogmoteGO default broadcast data (latest) when running
+      ansible.builtin.uri:
+        url: http://localhost:9012/api/broadcast/data/default/latest
+        method: GET
+        return_content: true
+        timeout: 5
+      register: default_data_response
+      failed_when: false
+      when: is_running | bool
+
+    - name: Pretty print default broadcast data (if not empty)
+      ansible.builtin.debug:
+        msg: "{{ default_data_response.json | to_nice_json }}"
+      when:
+        - is_running | bool
+        - default_data_response.json is defined
+        - default_data_response.json | length > 0
+
+    - name: Report unreachable hosts (controller)
+      ansible.builtin.debug:
+        msg: >-
+          Unreachable hosts: {{
+            (groups['unreachable_hosts'] | default([]) | join(', '))
+            if (groups['unreachable_hosts'] | default([]) | length > 0)
+            else 'none'
+          }}
+      run_once: true
+      delegate_to: localhost
+

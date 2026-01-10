@@ -111,7 +111,7 @@ cagelab_test:
     ansible_user: cagelab
     ansible_ssh_private_key_file: ~/.ssh/cagelab
 
-admin_servers:
+admin:
   hosts:
     cog5:
       ansible_host: cog5.cloud.lab
@@ -121,12 +121,16 @@ admin_servers:
       ansible_host: cog21.cloud.lab
       ansible_user: cog
       ansible_ssh_private_key_file: ~/.ssh/cagelab
+	cog12:
+	  ansible_host: cog12.cloud.lab
+	  ansible_user: cagelab
+	  ansible_ssh_private_key_file: ~/.ssh/cagelab
     prisys-alyx:
       ansible_host: prisys-alyx.cloud.lab
       ansible_user: prisys
       ansible_ssh_private_key_file: ~/.ssh/prisys
 
-ip_servers:
+admin_ip:
   hosts:
     cog12:
       ansible_host: 192.168.3.66

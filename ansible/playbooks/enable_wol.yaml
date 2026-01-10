@@ -1,6 +1,6 @@
 ---
 - name: Enable Wake-on-LAN for all Ethernet connections
-  hosts: "{{ target | default('cagelab_servers') }}"
+  hosts: all
   gather_facts: false
   become: true
   ignore_unreachable: true

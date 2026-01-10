@@ -1,7 +1,7 @@
 ---
 # For help, check out https://www.redhat.com/en/topics/automation/what-is-an-ansible-playbook
 - name: Upgrade APT
-  hosts: "{{ target | default('cagelab_servers') }}"
+  hosts: all
   gather_facts: true
 
   tasks:

@@ -6,8 +6,13 @@ Host cog5
 	IdentityFile ~/.ssh/id_rsa
 	IdentitiesOnly yes
 Host cog12
+	HostName cog12.cloud.lab
+	User cagelab
+	IdentityFile ~/.ssh/cagelab
+	IdentitiesOnly yes
+Host cog12i
 	HostName 192.168.3.66
-	User cog
+	User cagelab
 	IdentityFile ~/.ssh/cagelab
 	IdentitiesOnly yes
 Host win420

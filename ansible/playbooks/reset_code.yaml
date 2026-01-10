@@ -1,6 +1,6 @@
 ---
 - name: Reset CageLab Code Repositories
-  hosts: "{{ target | default('all') }}"
+  hosts: all
   gather_facts: false
   ignore_unreachable: true
 

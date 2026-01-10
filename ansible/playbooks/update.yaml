@@ -1,7 +1,7 @@
 ---
 # For help, check out https://www.redhat.com/en/topics/automation/what-is-an-ansible-playbook
 - name: Update CageLab Software
-  hosts: "{{ target | default('cagelab_servers') }}"
+  hosts: "{{ target | default('cagelab') }}"
   gather_facts: true
   ignore_unreachable: true
 
